@@ -19,7 +19,9 @@ If you grabbed the [Udemy course](https://www.udemy.com/the-complete-guide-to-an
 ## Otherwise...
 
 Make your first app!:  
-```ng new my-first-app```
+```ng new my-first-app```  
+Build and run it with:  
+```ng serve```  
 
 In lieu of the Udemy course, follow one of these other resources for guidance:  
 
@@ -44,6 +46,8 @@ Alternatively set the repo as upstream:
 
 If you want to submit a change but don't have permissions yet, you can instead fork and submit a pull request. Otherwise, do the following:  
 ```git push origin master```  
+
+Once you have the project, don't forget to perform ```npm install```, then you can build and run with ```ng serve```. By default, the Angular CLI dev server serves at localhost:4200
 
 If the thought of using one branch makes you cringe, good. Make and manage your own branch if you like, or simply use master. It shouldn't matter. I am very much a git novice, so if you are having trouble with the above steps, reach out to me or one of the more informed group members for assistance.
 
