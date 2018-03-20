@@ -7,7 +7,7 @@ Download VS Code or something:
 https://code.visualstudio.com/
 
 Install Angular CLI via npm:  
-npm install -g @angular/cli
+```npm install -g @angular/cli```
 
 Download git:  
 https://git-scm.com/downloads
@@ -46,6 +46,10 @@ If you want to submit a change but don't have permissions yet, you can instead f
 ```git push origin master```  
 
 If the thought of using one branch makes you cringe, good. Make and manage your own branch if you like, or simply use master. It shouldn't matter. I am very much a git novice, so if you are having trouble with the above steps, reach out to me or one of the more informed group members for assistance.
+
+If you need a RESTful service to ping off of and don't feel like setting up your own, try one of these free, public APIs:  
+https://github.com/toddmotto/public-apis  
+I will be using the Space Agency API for my tab on the site.
 
 ## Optionally
 
