@@ -17,6 +17,9 @@ import {HamiltonComponent} from './hamilton/hamilton.component';
 import {GrayComponent} from './gray/gray.component';
 import {TranComponent} from './tran/tran.component';
 import {PinedoComponent} from './pinedo/pinedo.component';
+import {LaunchListComponent} from './brown/space-agency-home/launch-list/launch-list.component';
+import {SpaceHeaderComponent} from './brown/space-header/space-header.component';
+import {JamesComponent} from './james/james.component';
 
 
 @NgModule({
@@ -24,7 +27,9 @@ import {PinedoComponent} from './pinedo/pinedo.component';
     AppComponent,
     HeaderComponent,
     BrownComponent,
+    SpaceHeaderComponent,
     SpaceAgencyHomeComponent,
+    LaunchListComponent,
     SaeedComponent,
     SuperCoolComponent,
     MamedbekovComponent,
@@ -34,7 +39,8 @@ import {PinedoComponent} from './pinedo/pinedo.component';
     HamiltonComponent,
     GrayComponent,
     TranComponent,
-    PinedoComponent
+    PinedoComponent,
+    JamesComponent
   ],
   imports: [
     BrowserModule,

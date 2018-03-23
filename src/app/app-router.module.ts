@@ -12,6 +12,7 @@ import {MamedbekovComponent} from './mamedbekov/mamedbekov.component';
 import {WuComponent} from './wu/wu.component';
 import {HamiltonComponent} from './hamilton/hamilton.component';
 import {GrayComponent} from './gray/gray.component';
+import {JamesComponent} from './james/james.component';
 
 const routes: Routes = [
   { path: 'brown', component: BrownComponent, children: [
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'hamilton', component: HamiltonComponent },
   { path: 'gray', component: GrayComponent },
   { path: 'tran', component: StrattonComponent },
+  { path: 'james', component: JamesComponent },
   { path: '**', redirectTo: 'brown' }
 ];
 

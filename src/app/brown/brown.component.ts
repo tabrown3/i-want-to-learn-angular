@@ -13,9 +13,6 @@ export class BrownComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    setInterval(()=> {
-      this.myText = (new Date()).toTimeString();
-    }, 100)
   }
 
 }
