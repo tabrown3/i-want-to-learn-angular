@@ -9,6 +9,14 @@ import { SuperCoolComponent } from './saeed/super-cool/super-cool.component';
 import { BrownComponent } from './brown/brown.component';
 import { SaeedComponent } from './saeed/saeed.component';
 import { HeaderComponent } from './header/header.component';
+import {MamedbekovComponent} from './mamedbekov/mamedbekov.component';
+import {StrattonComponent} from './stratton/stratton.component';
+import {DaramComponent} from './daram/daram.component';
+import {WuComponent} from './wu/wu.component';
+import {HamiltonComponent} from './hamilton/hamilton.component';
+import {GrayComponent} from './gray/gray.component';
+import {TranComponent} from './tran/tran.component';
+import {PinedoComponent} from './pinedo/pinedo.component';
 
 
 @NgModule({
@@ -18,7 +26,15 @@ import { HeaderComponent } from './header/header.component';
     BrownComponent,
     SpaceAgencyHomeComponent,
     SaeedComponent,
-    SuperCoolComponent
+    SuperCoolComponent,
+    MamedbekovComponent,
+    StrattonComponent,
+    DaramComponent,
+    WuComponent,
+    HamiltonComponent,
+    GrayComponent,
+    TranComponent,
+    PinedoComponent
   ],
   imports: [
     BrowserModule,
