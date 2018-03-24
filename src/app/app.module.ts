@@ -20,6 +20,10 @@ import {PinedoComponent} from './pinedo/pinedo.component';
 import {LaunchListComponent} from './brown/space-agency-home/launch-list/launch-list.component';
 import {SpaceHeaderComponent} from './brown/space-header/space-header.component';
 import {JamesComponent} from './james/james.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {ViswamaniComponent} from './viswamani/viswamani.component';
+import {HochComponent} from './hoch/hoch.component';
+import {PatelComponent} from './patel/patel.component';
 
 
 @NgModule({
@@ -40,12 +44,16 @@ import {JamesComponent} from './james/james.component';
     GrayComponent,
     TranComponent,
     PinedoComponent,
-    JamesComponent
+    JamesComponent,
+    ViswamaniComponent,
+    HochComponent,
+    PatelComponent
   ],
   imports: [
     BrowserModule,
     AppRouterModule,
-    FormsModule
+    FormsModule,
+    NgbModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

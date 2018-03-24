@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
 import { SpaceAgencyHomeComponent } from './brown/space-agency-home/space-agency-home.component';
 import { SuperCoolComponent } from './saeed/super-cool/super-cool.component';
 import { BrownComponent } from './brown/brown.component';
@@ -13,6 +12,9 @@ import {WuComponent} from './wu/wu.component';
 import {HamiltonComponent} from './hamilton/hamilton.component';
 import {GrayComponent} from './gray/gray.component';
 import {JamesComponent} from './james/james.component';
+import {ViswamaniComponent} from './viswamani/viswamani.component';
+import {HochComponent} from './hoch/hoch.component';
+import {PatelComponent} from './patel/patel.component';
 
 const routes: Routes = [
   { path: 'brown', component: BrownComponent, children: [
@@ -30,6 +32,9 @@ const routes: Routes = [
   { path: 'gray', component: GrayComponent },
   { path: 'tran', component: StrattonComponent },
   { path: 'james', component: JamesComponent },
+  { path: 'viswamani', component: ViswamaniComponent },
+  { path: 'hoch', component: HochComponent },
+  { path: 'patel', component: PatelComponent },
   { path: '**', redirectTo: 'brown' }
 ];
 
