@@ -9,7 +9,6 @@ import { SuperCoolComponent } from './saeed/super-cool/super-cool.component';
 import { BrownComponent } from './brown/brown.component';
 import { SaeedComponent } from './saeed/saeed.component';
 import { HeaderComponent } from './header/header.component';
-import {MamedbekovComponent} from './mamedbekov/mamedbekov.component';
 import {StrattonComponent} from './stratton/stratton.component';
 import {DaramComponent} from './daram/daram.component';
 import {WuComponent} from './wu/wu.component';
@@ -24,6 +23,10 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ViswamaniComponent} from './viswamani/viswamani.component';
 import {HochComponent} from './hoch/hoch.component';
 import {PatelComponent} from './patel/patel.component';
+
+//Tony Start
+import {MamedbekovComponent} from './mamedbekov/mamedbekov.component';
+import {SearchHomeComponent} from './mamedbekov/app-search-home/app-search-home.component';
 
 
 @NgModule({
@@ -47,7 +50,8 @@ import {PatelComponent} from './patel/patel.component';
     JamesComponent,
     ViswamaniComponent,
     HochComponent,
-    PatelComponent
+    PatelComponent,
+    SearchHomeComponent
   ],
   imports: [
     BrowserModule,
