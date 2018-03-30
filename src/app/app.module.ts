@@ -9,11 +9,11 @@ import { SuperCoolComponent } from './saeed/super-cool/super-cool.component';
 import { BrownComponent } from './brown/brown.component';
 import { SaeedComponent } from './saeed/saeed.component';
 import { HeaderComponent } from './header/header.component';
-import {StrattonComponent} from './stratton/stratton.component';
+import {StrattonModule} from './stratton/stratton.module';
 import {DaramComponent} from './daram/daram.component';
 import {WuComponent} from './wu/wu.component';
 import {HamiltonComponent} from './hamilton/hamilton.component';
-import {GrayComponent} from './gray/gray.component';
+// import {GrayComponent} from './gray/gray.component';
 import {TranComponent} from './tran/tran.component';
 import {PinedoComponent} from './pinedo/pinedo.component';
 import {LaunchListComponent} from './brown/space-agency-home/launch-list/launch-list.component';
@@ -24,7 +24,7 @@ import {ViswamaniComponent} from './viswamani/viswamani.component';
 import {HochComponent} from './hoch/hoch.component';
 import {PatelComponent} from './patel/patel.component';
 
-//Tony Start
+// Tony Start
 import {MamedbekovComponent} from './mamedbekov/mamedbekov.component';
 import {SearchHomeComponent} from './mamedbekov/app-search-home/app-search-home.component';
 
@@ -40,11 +40,11 @@ import {SearchHomeComponent} from './mamedbekov/app-search-home/app-search-home.
     SaeedComponent,
     SuperCoolComponent,
     MamedbekovComponent,
-    StrattonComponent,
+
     DaramComponent,
     WuComponent,
     HamiltonComponent,
-    GrayComponent,
+    // GrayComponent,
     TranComponent,
     PinedoComponent,
     JamesComponent,
@@ -57,7 +57,8 @@ import {SearchHomeComponent} from './mamedbekov/app-search-home/app-search-home.
     BrowserModule,
     AppRouterModule,
     FormsModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    StrattonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

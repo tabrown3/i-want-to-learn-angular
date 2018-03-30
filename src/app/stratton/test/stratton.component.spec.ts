@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StrattonComponent } from './stratton.component';
+import { StrattonComponent } from '../components/stratton.component';
 
 describe('StrattonComponent', () => {
   let component: StrattonComponent;
