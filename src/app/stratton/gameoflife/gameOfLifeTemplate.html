@@ -1,0 +1,12 @@
+<canvas #gameOfLifeRenderer [attr.width]="columnCount * cellSize" [attr.height]="rowCount * cellSize"></canvas>
+
+<fieldset>
+    <legend>Options:</legend>
+    <input type="number" min="8" max="32" [(value)]="columnCount" />
+    <input type="number" min="8" max="32" [(value)]="rowCount" />
+    <input type="number" min="8" max="32" [(value)]="cellSize" />
+</fieldset>
+
+<button (click)="randomize()">Randomize</button>
+<button (click)="startGame()">Start</button>
+<button (click)="stopGame()">Stop</button>
