@@ -6,12 +6,10 @@ import { Injectable } from '@angular/core';
 export class GameOfLifeService implements Stratton.IGameOfLifeService {
 
     readonly constraints: Stratton.IGameOfLifeConstraints;
+    renderer: Stratton.IGameOfLifeRenderer;
     statebuffer0: Int8Array;
     statebuffer1: Int8Array;
     bufferInUse = 0;
-
-    readonly livingColor: 0xFFFFFF;
-    readonly deathColor: 0x000000;
 
     readonly neighbours: Stratton.IPoint[] = [
         {x: -1, y: -1}, {x:  0, y: -1}, {x:  1, y: -1},
@@ -24,6 +22,8 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
             rows: 16,
             cols: 16,
             cellSizeInPixels: 10,
+            livingColor: 0xFFFFFF,
+            deathColor: 0x000000
         };
 
         this.statebuffer0 = new Int8Array(this.dataSize);
@@ -83,19 +83,8 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
         return this.bufferInUse ? this.statebuffer1 : this.statebuffer0;
     }
 
-    render(context: CanvasRenderingContext2D): void {
-        const scale = this.constraints.cellSizeInPixels;
-        const imageData = context.getImageData(0, 0, this.constraints.cols, this.constraints.rows);
-
-        for (let index = 0; index < this.dataSize; index++) {
-            const imageIndex = index * 4;
-            const pointState: number = this.state[index] ? this.livingColor : this.deathColor;
-            imageData.data[imageIndex + 0] = 255;
-            imageData.data[imageIndex + 1] = 0;
-            imageData.data[imageIndex + 2] = 255;
-            imageData.data[imageIndex + 3] = 255;
-        }
-        context.putImageData(imageData, 0, 0);
+    render(): void {
+        this.renderer.render(this.state, this.constraints);
     }
 
 }

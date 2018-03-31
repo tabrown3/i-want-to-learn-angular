@@ -2,6 +2,7 @@ declare namespace Stratton {
 
     export interface IGlobalReference {
         requestAnimationFrame(callback: FrameRequestCallback): void;
+        document: Document;        
     }
 
     export interface IPoint {
@@ -14,16 +15,25 @@ declare namespace Stratton {
         cols: number;
 
         cellSizeInPixels: number;
+
+        livingColor: number,
+        deathColor: number
     }
 
     export interface IGameOfLifeService {
         constraints: IGameOfLifeConstraints;
         readonly state: Int8Array;
 
+        renderer: IGameOfLifeRenderer;
+
         reset(): void;
         tick(): void;
         randomize(): void;
-        render(context: CanvasRenderingContext2D): void;
+        render(): void;
+    }
+
+    export interface IGameOfLifeRenderer {
+        render(state: Int8Array, constraints: IGameOfLifeConstraints);
     }
 }
 

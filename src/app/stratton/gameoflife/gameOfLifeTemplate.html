@@ -1,10 +1,10 @@
-<canvas #gameOfLifeRenderer [attr.width]="columnCount * cellSize" [attr.height]="rowCount * cellSize"></canvas>
+<app-gameoflife-canvasrenderer></app-gameoflife-canvasrenderer>
 
 <fieldset>
     <legend>Options:</legend>
-    <input type="number" min="8" max="32" [(value)]="columnCount" />
-    <input type="number" min="8" max="32" [(value)]="rowCount" />
-    <input type="number" min="8" max="32" [(value)]="cellSize" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cols" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.rows" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cellSizeInPixels" />
 </fieldset>
 
 <button (click)="randomize()">Randomize</button>
