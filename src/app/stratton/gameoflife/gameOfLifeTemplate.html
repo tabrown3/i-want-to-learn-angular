@@ -2,9 +2,9 @@
 
 <fieldset>
     <legend>Options:</legend>
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cols" />
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.rows" />
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cellSizeInPixels" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
+    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cellSizeInPixels" (change)="resetGame()" />
 </fieldset>
 
 <button (click)="randomize()">Randomize</button>

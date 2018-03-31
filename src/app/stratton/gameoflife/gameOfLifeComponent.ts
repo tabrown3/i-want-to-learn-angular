@@ -48,6 +48,11 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isRunning = false;
     }
 
+    public resetGame(): void {
+        this.stopGame();
+        this.gameOfLifeService.reset();
+    }
+
     public randomize(): void {
         this.isRunning = false;
         this.gameOfLifeService.randomize();

@@ -11,34 +11,35 @@ import { InjectToken } from '../../stratton.injection';
 export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfLifeRenderer {
 
     context: CanvasRenderingContext2D;
-
+    scratchContext: CanvasRenderingContext2D;
     @ViewChild('canvas') canvasElement: ElementRef;
-    scratchCanvas: HTMLCanvasElement;
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
     ngAfterViewInit(): void {
         this.context = this.canvasElement.nativeElement.getContext('2d');
-        this.scratchCanvas = this.globalReference.document.createElement('canvas');
+        this.scratchContext = this.globalReference.document.createElement('canvas').getContext('2d');
     }
 
     render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
         const scale = constraints.cellSizeInPixels;
 
         this.context.imageSmoothingEnabled = false;
+        this.context.imageSmoothingEnabled = false;
+        this.context.mozImageSmoothingEnabled = false;
+        this.context.webkitImageSmoothingEnabled = false;
 
-        this.canvasElement.nativeElement.width = constraints.cols * scale;
-        this.canvasElement.nativeElement.height = constraints.rows * scale;
+        this.context.canvas.width = constraints.cols * scale;
+        this.context.canvas.height = constraints.rows * scale;
 
-        this.scratchCanvas.width = constraints.cols;
-        this.scratchCanvas.height = constraints.rows;
+        this.scratchContext.canvas.width = constraints.cols;
+        this.scratchContext.canvas.height = constraints.rows;
 
-        const scratchContext = this.scratchCanvas.getContext('2d');
-        scratchContext.imageSmoothingEnabled = false;
-        scratchContext.mozImageSmoothingEnabled = false;
-        scratchContext.webkitImageSmoothingEnabled = false;
+        this.scratchContext.imageSmoothingEnabled = false;
+        this.scratchContext.mozImageSmoothingEnabled = false;
+        this.scratchContext.webkitImageSmoothingEnabled = false;
 
-        const imageData = scratchContext.createImageData(constraints.cols, constraints.rows);
+        const imageData = this.scratchContext.createImageData(constraints.cols, constraints.rows);
 
         for (let index = 0; index < state.length; index++) {
             const imageIndex = index * 4;
@@ -49,8 +50,11 @@ export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfL
             imageData.data[imageIndex + 3] = 255;
         }
 
-        scratchContext.putImageData(imageData, 0, 0);
-        this.context.drawImage(this.scratchCanvas, 0, 0, scale * constraints.cols, scale * constraints.rows);
+        this.scratchContext.putImageData(imageData, 0, 0);
+        this.context.save();
+        this.context.scale(scale, scale);
+        this.context.drawImage(this.scratchContext.canvas, 0, 0);
+        this.context.restore();
     }
 }
 /* tslint:enable:no-bitwise */

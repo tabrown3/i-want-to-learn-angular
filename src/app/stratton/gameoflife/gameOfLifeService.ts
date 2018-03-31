@@ -26,8 +26,7 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
             deathColor: 0x000000
         };
 
-        this.statebuffer0 = new Int8Array(this.dataSize);
-        this.statebuffer1 = new Int8Array(this.dataSize);
+        this.reset();
     }
 
     reset(): void {
