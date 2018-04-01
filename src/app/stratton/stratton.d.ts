@@ -15,6 +15,7 @@ declare namespace Stratton {
         cols: number;
 
         cellSizeInPixels: number;
+        isTorus: boolean;
 
         livingColor: number,
         deathColor: number

@@ -2,17 +2,21 @@ import { NgModule, InjectionToken } from '@angular/core';
 import { RouterModule, Route } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { StrattonComponent } from './components/stratton.component';
 import { GameOfLifeService } from './gameoflife/gameOfLifeService';
 import { GameOfLifeComponent } from './gameoflife/gameOfLifeComponent';
 
 import { InjectToken } from './stratton.injection';
+
 import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererComponent';
+import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';
+import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
 
 @NgModule({
-    imports : [RouterModule, FormsModule],
-    declarations: [StrattonComponent, GameOfLifeComponent, CanvasRendererComponent],
+    imports : [RouterModule, FormsModule, CommonModule],
+    declarations: [StrattonComponent, GameOfLifeComponent, CanvasRendererComponent, TextRendererComponent, RendererSelectorComponent],
     providers: [
         {
             provide: InjectToken.IGlobalReference,

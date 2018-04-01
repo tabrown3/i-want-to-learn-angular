@@ -3,7 +3,7 @@ import {
     OnDestroy, NgZone, InjectionToken, Inject, AfterViewInit, QueryList } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { GameOfLifeService } from './gameOfLifeService';
-import { CanvasRendererComponent } from './renderers/CanvasRendererComponent';
+import { RendererSelectorComponent, GameOfLifeRendererEnum } from './renderers/RenderSelectorComponent';
 
 import { InjectToken } from '../stratton.injection';
 
@@ -13,8 +13,7 @@ import { InjectToken } from '../stratton.injection';
 })
 export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    renderingContext: CanvasRenderingContext2D = null;
-    @ViewChild(CanvasRendererComponent) renderer: CanvasRendererComponent;
+    @ViewChild(RendererSelectorComponent) rendererSelector: RendererSelectorComponent;
 
     private isRunning = false;
 
@@ -28,7 +27,7 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.gameOfLifeService.renderer = this.renderer;
+        this.updateRenderer();
     }
 
     ngOnDestroy(): void {
@@ -37,6 +36,15 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     get constraintModel(): Stratton.IGameOfLifeConstraints {
         return this.gameOfLifeService.constraints;
+    }
+
+    get selectedRendererType(): string {
+        return GameOfLifeRendererEnum[this.rendererSelector.selectedRenderer];
+    }
+
+    set selectedRendererType(type: string) {
+        this.rendererSelector.selectedRenderer = GameOfLifeRendererEnum[type];
+        this.updateRenderer();
     }
 
     public startGame(): void {
@@ -55,7 +63,9 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public randomize(): void {
         this.isRunning = false;
+        this.gameOfLifeService.reset();
         this.gameOfLifeService.randomize();
+        this.gameOfLifeService.render();
     }
 
     private renderFrame(): void {
@@ -64,8 +74,13 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         this.gameOfLifeService.tick();
-        this.gameOfLifeService.render();
+        this.ngZone.run(() => this.gameOfLifeService.render());
         this.globalReference.requestAnimationFrame(() => this.renderFrame());
+    }
+
+    private updateRenderer(): void {
+        this.gameOfLifeService.renderer = this.rendererSelector.renderer;
+        this.gameOfLifeService.render();
     }
 }
 

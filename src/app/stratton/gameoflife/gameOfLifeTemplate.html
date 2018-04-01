@@ -1,10 +1,25 @@
-<app-gameoflife-canvasrenderer></app-gameoflife-canvasrenderer>
+<app-gameoflife-renderselector></app-gameoflife-renderselector>
 
 <fieldset>
     <legend>Options:</legend>
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
-    <input type="number" min="8" max="32" [(ngModel)]="constraintModel.cellSizeInPixels" (change)="resetGame()" />
+
+    <label>Rows</label>
+    <input type="number" min="8" max="64" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
+
+    <label>Columns</label>
+    <input type="number" min="8" max="64" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
+
+    <label>Cell Size</label>
+    <input type="number" min="8" max="64" [(ngModel)]="constraintModel.cellSizeInPixels" (change)="resetGame()" />
+
+    <label>Surface is a torus</label>
+    <input type="checkbox" [(ngModel)]="constraintModel.isTorus" (change)="resetGame()" />
+
+    <label>Renderer</label>
+    <select [(ngModel)]="selectedRendererType">
+        <option value="text">Text</option>
+        <option value="canvas">Canvas</option>
+    </select>
 </fieldset>
 
 <button (click)="randomize()">Randomize</button>

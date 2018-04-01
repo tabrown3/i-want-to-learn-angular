@@ -22,6 +22,7 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
             rows: 16,
             cols: 16,
             cellSizeInPixels: 10,
+            isTorus: false,
             livingColor: 0xFFFFFF,
             deathColor: 0x000000
         };
@@ -65,11 +66,20 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
         const y = index / this.constraints.cols | 0;
 
         return this.neighbours.reduce((acc, point) => {
-            if (point.x + x >= 0 && point.x + x < this.constraints.cols &&
-                point.y + y >= 0 && point.y + y < this.constraints.rows) {
-                    const neighbourIndex = (point.y + y) * this.constraints.cols + (point.x + x);
+            let dx = point.x + x;
+            let dy = point.y + y;
+
+            if (this.constraints.isTorus) {
+                dx = (dx + this.constraints.cols) % this.constraints.cols;
+                dy = (dy + this.constraints.rows) % this.constraints.rows;
+            }
+
+            if (dx >= 0 && dx < this.constraints.cols &&
+                dy >= 0 && dy < this.constraints.rows) {
+                    const neighbourIndex = dy * this.constraints.cols + dx;
                     acc += buffer[neighbourIndex] ? 1 : 0;
             }
+
             return acc;
         }, 0);
     }
@@ -83,7 +93,9 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
     }
 
     render(): void {
-        this.renderer.render(this.state, this.constraints);
+        if (this.renderer) {
+            this.renderer.render(this.state, this.constraints);
+        }
     }
 
 }

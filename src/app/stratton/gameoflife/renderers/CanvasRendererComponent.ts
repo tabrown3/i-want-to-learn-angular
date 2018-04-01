@@ -24,20 +24,11 @@ export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfL
     render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
         const scale = constraints.cellSizeInPixels;
 
-        this.context.imageSmoothingEnabled = false;
-        this.context.imageSmoothingEnabled = false;
-        this.context.mozImageSmoothingEnabled = false;
-        this.context.webkitImageSmoothingEnabled = false;
-
         this.context.canvas.width = constraints.cols * scale;
         this.context.canvas.height = constraints.rows * scale;
 
         this.scratchContext.canvas.width = constraints.cols;
         this.scratchContext.canvas.height = constraints.rows;
-
-        this.scratchContext.imageSmoothingEnabled = false;
-        this.scratchContext.mozImageSmoothingEnabled = false;
-        this.scratchContext.webkitImageSmoothingEnabled = false;
 
         const imageData = this.scratchContext.createImageData(constraints.cols, constraints.rows);
 
@@ -53,6 +44,9 @@ export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfL
         this.scratchContext.putImageData(imageData, 0, 0);
         this.context.save();
         this.context.scale(scale, scale);
+        this.context.mozImageSmoothingEnabled = false;
+        this.context.webkitImageSmoothingEnabled = false;
+        this.context.imageSmoothingEnabled = false;
         this.context.drawImage(this.scratchContext.canvas, 0, 0);
         this.context.restore();
     }
