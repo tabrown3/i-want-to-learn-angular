@@ -1,41 +1,52 @@
 import { Component, ElementRef, ViewChild, Inject, OnInit } from '@angular/core';
 
+import { InjectToken} from '../../stratton.injection';
+
 @Component({
     selector: 'app-gameoflife-textrenderer',
-    template: `<pre #pre>{{text}}</pre>`
+    template: `<div #div></div>`
 })
-export class TextRendererComponent implements Stratton.IGameOfLifeRenderer, OnInit {
+export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
 
-    @ViewChild('pre') preElement: ElementRef;
-    text: string;
+    @ViewChild('div') element: ElementRef;
 
-    constructor() {   }
-
-    ngOnInit(): void {
-        this.text = '';
-    }
+    constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
     render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
         const scale = constraints.cellSizeInPixels;
 
-        this.preElement.nativeElement.style.fontSize = constraints.cellSizeInPixels + 'px';
-        this.preElement.nativeElement.style.lineHeight = constraints.cellSizeInPixels + 'px';
-        this.preElement.nativeElement.style.color = this.intToColor(constraints.livingColor);
-        this.preElement.nativeElement.style.backgroundColor = this.intToColor(constraints.deathColor);
-        this.preElement.nativeElement.style.width = constraints.cols + 'ch';
-        this.preElement.nativeElement.style.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
-        this.preElement.nativeElement.style.overflowX = 'hidden';
-        this.preElement.nativeElement.style.overflowY = 'hidden';
+        const div = this.element.nativeElement as HTMLElement;
+        const divStyle = div.style;
+        const document = this.globalReference.document;
 
-        const characters = [];
+        while (div.firstChild) {
+            div.removeChild(div.firstChild);
+        }
+
+        divStyle.fontSize = constraints.cellSizeInPixels + 'px';
+        divStyle.lineHeight = constraints.cellSizeInPixels + 'px';
+        divStyle.backgroundColor = this.intToColor(constraints.deathColor);
+        divStyle.width = constraints.cols + 'ch';
+        divStyle.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
+        divStyle.overflowX = 'hidden';
+        divStyle.overflowY = 'hidden';
 
         for (let index = 0; index < state.length; index++) {
             if (index > 0 && index % constraints.cols === 0) {
-                characters.push('\n');
+                div.appendChild(document.createElement('br'));
             }
-            characters.push(state[index] ? '#' : ' ');
+            if (state[index]) {
+                const live = document.createElement('i');
+                live.innerText = '#';
+                live.style.color = this.intToColor(constraints.livingColor);
+                div.appendChild(live);
+            } else {
+                const blank = document.createElement('i');
+                blank.innerText = '#';
+                blank.style.color = this.intToColor(constraints.deathColor);
+                div.appendChild(blank);
+            }
         }
-        this.text = characters.join('');
     }
 
     private intToColor(num: number) {

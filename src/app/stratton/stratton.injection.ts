@@ -1,9 +1,11 @@
 import { InjectionToken } from '@angular/core';
 
-export const InjectToken_igameoflifeservice = new InjectionToken<Stratton.IGameOfLifeService>('IGameOfLifeService');
-export const InjectToken_iglobalreference = new InjectionToken<Stratton.IGlobalReference>('IGlobalReference');
+export function _<T>(name): InjectionToken<T> {
+    return new InjectionToken<T>(name);
+}
 
 export const InjectToken = {
-    IGameOfLifeService: InjectToken_igameoflifeservice,
-    IGlobalReference: InjectToken_iglobalreference
+    IGameOfLifeService: _<Stratton.IGameOfLifeService>('IGameOfLifeService'),
+    IGlobalReference: _<Stratton.IGlobalReference>('IGlobalReference')
 };
+
