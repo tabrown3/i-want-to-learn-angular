@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { GameOfLifeService } from './gameOfLifeService';
 import { RendererSelectorComponent, GameOfLifeRendererEnum } from './renderers/RenderSelectorComponent';
 
-import { InjectToken } from '../stratton.injection';
+import { InjectToken} from '../stratton.injection';
 
 @Component({
     selector: 'app-game-of-life',

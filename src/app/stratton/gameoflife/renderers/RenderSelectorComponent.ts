@@ -1,8 +1,6 @@
 import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { InjectToken } from '../../stratton.injection';
-
 import { TextRendererComponent } from '../renderers/TextRendererComponent';
 import { CanvasRendererComponent } from '../renderers/CanvasRendererComponent';
 import { Observable } from 'rxjs/Observable';
@@ -61,7 +59,7 @@ export class RendererSelectorComponent extends Observable<Stratton.IGameOfLifeRe
         }
     }
 
-    private isSelected(name: string) {
+    public isSelected(name: string) {
         return this.selectedRenderer === GameOfLifeRendererEnum[name];
     }
 }

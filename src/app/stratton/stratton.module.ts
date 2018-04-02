@@ -8,7 +8,8 @@ import { StrattonComponent } from './components/stratton.component';
 import { GameOfLifeService } from './gameoflife/gameOfLifeService';
 import { GameOfLifeComponent } from './gameoflife/gameOfLifeComponent';
 
-import { InjectToken } from './stratton.injection';
+// import { InjectToken } from './stratton.injection';
+import { InjectToken} from './stratton.injection';
 
 import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererComponent';
 import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';

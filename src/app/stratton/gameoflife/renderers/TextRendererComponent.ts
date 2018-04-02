@@ -1,7 +1,5 @@
 import { Component, ElementRef, ViewChild, Inject, OnInit } from '@angular/core';
 
-import { InjectToken } from '../../stratton.injection';
-
 @Component({
     selector: 'app-gameoflife-textrenderer',
     template: `<pre #pre>{{text}}</pre>`
