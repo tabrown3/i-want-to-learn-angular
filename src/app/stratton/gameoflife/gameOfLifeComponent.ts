@@ -11,11 +11,10 @@ import { InjectToken } from '../stratton.injection';
     selector: 'app-game-of-life',
     templateUrl: './gameOfLifeTemplate.html'
 })
-export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class GameOfLifeComponent implements OnDestroy {
 
-    @ViewChild(RendererSelectorComponent) rendererSelector: RendererSelectorComponent;
-
-    private isRunning = false;
+    isRunning = false;
+    renderer: RendererSelectorComponent;
 
     constructor(
         @Inject(InjectToken.IGameOfLifeService) private gameOfLifeService: Stratton.IGameOfLifeService,
@@ -23,11 +22,13 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
         private ngZone: NgZone
     ) {      }
 
-    ngOnInit() {
-    }
-
-    ngAfterViewInit(): void {
-        this.updateRenderer();
+    @ViewChild(RendererSelectorComponent)
+    set rendererSelector(component: RendererSelectorComponent) {
+        this.renderer = component;
+        component.subscribe((renderer) => {
+            this.gameOfLifeService.renderer = renderer;
+            this.gameOfLifeService.render();
+        });
     }
 
     ngOnDestroy(): void {
@@ -39,12 +40,16 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     get selectedRendererType(): string {
-        return GameOfLifeRendererEnum[this.rendererSelector.selectedRenderer];
+        if (!this.renderer) {
+            return null;
+        }
+        return GameOfLifeRendererEnum[this.renderer.rendererType];
     }
 
     set selectedRendererType(type: string) {
-        this.rendererSelector.selectedRenderer = GameOfLifeRendererEnum[type];
-        this.updateRenderer();
+        if (this.renderer) {
+            this.renderer.rendererType = GameOfLifeRendererEnum[type];
+        }
     }
 
     public startGame(): void {
@@ -76,11 +81,6 @@ export class GameOfLifeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.gameOfLifeService.tick();
         this.ngZone.run(() => this.gameOfLifeService.render());
         this.globalReference.requestAnimationFrame(() => this.renderFrame());
-    }
-
-    private updateRenderer(): void {
-        this.gameOfLifeService.renderer = this.rendererSelector.renderer;
-        this.gameOfLifeService.render();
     }
 }
 

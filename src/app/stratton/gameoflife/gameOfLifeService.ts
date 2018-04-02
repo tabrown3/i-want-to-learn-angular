@@ -19,10 +19,10 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
 
     constructor() {
         this.constraints = {
-            rows: 16,
-            cols: 16,
+            rows: 64,
+            cols: 64,
             cellSizeInPixels: 10,
-            isTorus: false,
+            isTorus: true,
             livingColor: 0xFFFFFF,
             deathColor: 0x000000
         };

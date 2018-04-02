@@ -34,10 +34,7 @@ export class StrattonModule {
 
         return {
             path : rootPath,
-            component : StrattonComponent,
-            children : [
-                {path : 'game-of-life', component: GameOfLifeComponent}
-            ]
+            component : StrattonComponent
         };
     }
 }

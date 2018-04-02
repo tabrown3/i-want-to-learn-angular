@@ -24,14 +24,18 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer, OnIn
         this.preElement.nativeElement.style.lineHeight = constraints.cellSizeInPixels + 'px';
         this.preElement.nativeElement.style.color = this.intToColor(constraints.livingColor);
         this.preElement.nativeElement.style.backgroundColor = this.intToColor(constraints.deathColor);
+        this.preElement.nativeElement.style.width = constraints.cols + 'ch';
+        this.preElement.nativeElement.style.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
+        this.preElement.nativeElement.style.overflowX = 'hidden';
+        this.preElement.nativeElement.style.overflowY = 'hidden';
 
         const characters = [];
 
         for (let index = 0; index < state.length; index++) {
-            characters.push(state[index] ? '#' : ' ');
             if (index > 0 && index % constraints.cols === 0) {
                 characters.push('\n');
             }
+            characters.push(state[index] ? '#' : ' ');
         }
         this.text = characters.join('');
     }
