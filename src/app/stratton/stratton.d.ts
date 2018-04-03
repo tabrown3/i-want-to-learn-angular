@@ -34,6 +34,7 @@ declare namespace Stratton {
     }
 
     export interface IGameOfLifeRenderer {
+        initialize(constraints: IGameOfLifeConstraints);
         render(state: Int8Array, constraints: IGameOfLifeConstraints);
     }
 }

@@ -50,13 +50,16 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
         divStyle.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
         divStyle.overflowX = 'hidden';
         divStyle.overflowY = 'hidden';
-        divStyle.margin = '10px';
         divStyle.backgroundColor = this.intToColor(constraints.deathColor);
+    }
+
+    initialize(constraints: Stratton.IGameOfLifeConstraints) {
+        this.rebuildReferences(constraints);
     }
 
     render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
         if (this.shouldRebuild(constraints)) {
-            this.rebuildReferences(constraints);
+            return;
         }
 
         const div = this.element.nativeElement as HTMLElement;

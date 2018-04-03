@@ -27,6 +27,7 @@ export class GameOfLifeComponent implements OnDestroy {
         this.renderer = component;
         component.subscribe((renderer) => {
             this.gameOfLifeService.renderer = renderer;
+            renderer.initialize(this.gameOfLifeService.constraints);
             this.gameOfLifeService.render();
         });
     }
