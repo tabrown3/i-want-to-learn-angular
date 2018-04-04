@@ -24,7 +24,8 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
             cellSizeInPixels: 10,
             isTorus: true,
             livingColor: 0xFFFFFF,
-            deathColor: 0x000000
+            deathColor: 0x000000,
+            frameDelay: 100
         };
 
         this.reset();

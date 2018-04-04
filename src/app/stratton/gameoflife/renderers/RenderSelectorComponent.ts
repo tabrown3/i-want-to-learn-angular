@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 
 import { TextRendererComponent } from '../renderers/TextRendererComponent';
 import { CanvasRendererComponent } from '../renderers/CanvasRendererComponent';
+import { WebGlRendererComponent } from '../renderers/WebGlRendererComponent';
+
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 
 export enum GameOfLifeRendererEnum {
     text,
-    canvas
+    canvas,
+    webgl
 }
-
-type Nextable = () => void;
 
 @Component({
     selector: 'app-gameoflife-renderselector',
@@ -19,6 +20,7 @@ type Nextable = () => void;
     `
     <app-gameoflife-textrenderer *ngIf="isSelected('text')"></app-gameoflife-textrenderer>
     <app-gameoflife-canvasrenderer *ngIf="isSelected('canvas')"></app-gameoflife-canvasrenderer>
+    <app-gameoflife-webglrenderer *ngIf="isSelected('webgl')"></app-gameoflife-webglrenderer>
     `
 })
 export class RendererSelectorComponent extends Observable<Stratton.IGameOfLifeRenderer> {
@@ -44,6 +46,13 @@ export class RendererSelectorComponent extends Observable<Stratton.IGameOfLifeRe
 
     @ViewChild(CanvasRendererComponent)
     set canvasRenderer(component: CanvasRendererComponent) {
+        if (component) {
+            this.subscriber.next(component);
+        }
+    }
+
+    @ViewChild(WebGlRendererComponent)
+    set webGlRenderer(component: WebGlRendererComponent) {
         if (component) {
             this.subscriber.next(component);
         }

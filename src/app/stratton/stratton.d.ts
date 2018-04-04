@@ -2,7 +2,8 @@ declare namespace Stratton {
 
     export interface IGlobalReference {
         requestAnimationFrame(callback: FrameRequestCallback): void;
-        document: Document;        
+        document: Document;   
+        setTimeout: (handler: (...args: any[]) => void, timeout: number) => number;
     }
 
     export interface IPoint {
@@ -18,7 +19,9 @@ declare namespace Stratton {
         isTorus: boolean;
 
         livingColor: number,
-        deathColor: number
+        deathColor: number,
+
+        frameDelay: number
     }
 
     export interface IGameOfLifeService {
@@ -34,6 +37,7 @@ declare namespace Stratton {
     }
 
     export interface IGameOfLifeRenderer {
+        initialize(constraints: IGameOfLifeConstraints);
         render(state: Int8Array, constraints: IGameOfLifeConstraints);
     }
 }

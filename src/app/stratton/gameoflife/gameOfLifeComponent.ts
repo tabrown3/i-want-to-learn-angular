@@ -27,6 +27,7 @@ export class GameOfLifeComponent implements OnDestroy {
         this.renderer = component;
         component.subscribe((renderer) => {
             this.gameOfLifeService.renderer = renderer;
+            renderer.initialize(this.gameOfLifeService.constraints);
             this.gameOfLifeService.render();
         });
     }
@@ -80,7 +81,10 @@ export class GameOfLifeComponent implements OnDestroy {
 
         this.gameOfLifeService.tick();
         this.ngZone.run(() => this.gameOfLifeService.render());
-        this.globalReference.requestAnimationFrame(() => this.renderFrame());
+
+        this.globalReference.setTimeout(() => {
+            this.globalReference.requestAnimationFrame(() => this.renderFrame());
+        }, this.constraintModel.frameDelay);
     }
 }
 
