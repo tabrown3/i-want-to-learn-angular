@@ -12,8 +12,17 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
-    render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
-        const scale = constraints.cellSizeInPixels;
+    elementArray: HTMLElement[];
+    rows = 0;
+    cols = 0;
+
+    shouldRebuild(constraints: Stratton.IGameOfLifeConstraints): boolean {
+        return constraints.rows !== this.rows || constraints.cols !== this.cols;
+    }
+
+    rebuildReferences(constraints: Stratton.IGameOfLifeConstraints) {
+        this.rows = constraints.rows;
+        this.cols = constraints.cols;
 
         const div = this.element.nativeElement as HTMLElement;
         const divStyle = div.style;
@@ -23,30 +32,45 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
             div.removeChild(div.firstChild);
         }
 
-        divStyle.fontSize = constraints.cellSizeInPixels + 'px';
-        divStyle.lineHeight = constraints.cellSizeInPixels + 'px';
-        divStyle.backgroundColor = this.intToColor(constraints.deathColor);
-        divStyle.width = constraints.cols + 'ch';
+        this.elementArray = [];
+
+        for (let r = 0; r < constraints.rows; r++) {
+            const row = document.createElement('div');
+            for (let c = 0; c < constraints.cols; c++) {
+                const cell = document.createElement('i');
+                cell.innerHTML = '#';
+                cell.style.color = this.intToColor(constraints.deathColor);
+                row.appendChild(cell);
+                this.elementArray.push(cell);
+            }
+            div.appendChild(row);
+        }
+
+        divStyle.width = (constraints.cols * constraints.cellSizeInPixels) + 'px';
         divStyle.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
         divStyle.overflowX = 'hidden';
         divStyle.overflowY = 'hidden';
+        divStyle.backgroundColor = this.intToColor(constraints.deathColor);
+    }
 
-        for (let index = 0; index < state.length; index++) {
-            if (index > 0 && index % constraints.cols === 0) {
-                div.appendChild(document.createElement('br'));
-            }
-            if (state[index]) {
-                const live = document.createElement('i');
-                live.innerText = '#';
-                live.style.color = this.intToColor(constraints.livingColor);
-                div.appendChild(live);
-            } else {
-                const blank = document.createElement('i');
-                blank.innerText = '#';
-                blank.style.color = this.intToColor(constraints.deathColor);
-                div.appendChild(blank);
-            }
+    initialize(constraints: Stratton.IGameOfLifeConstraints) {
+        this.rebuildReferences(constraints);
+    }
+
+    render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
+        if (this.shouldRebuild(constraints)) {
+            return;
         }
+
+        const div = this.element.nativeElement as HTMLElement;
+        const divStyle = div.style;
+
+        divStyle.fontSize = constraints.cellSizeInPixels + 'px';
+        divStyle.lineHeight = constraints.cellSizeInPixels + 'px';
+
+        this.elementArray.forEach((elm, index) => {
+            elm.style.color = this.intToColor(state[index] ? constraints.livingColor : constraints.deathColor);
+        });
     }
 
     private intToColor(num: number) {

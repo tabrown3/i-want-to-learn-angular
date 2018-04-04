@@ -13,11 +13,16 @@ import { InjectToken} from './stratton.injection';
 
 import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererComponent';
 import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';
+import { WebGlRendererComponent } from './gameoflife/renderers/WebGlRendererComponent';
+
 import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
+
 
 @NgModule({
     imports : [RouterModule, FormsModule, CommonModule],
-    declarations: [StrattonComponent, GameOfLifeComponent, CanvasRendererComponent, TextRendererComponent, RendererSelectorComponent],
+    declarations: [
+        StrattonComponent, GameOfLifeComponent, CanvasRendererComponent,
+        TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent],
     providers: [
         {
             provide: InjectToken.IGlobalReference,
