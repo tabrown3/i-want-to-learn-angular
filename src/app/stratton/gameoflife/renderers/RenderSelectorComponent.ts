@@ -23,14 +23,14 @@ export enum GameOfLifeRendererEnum {
     <app-gameoflife-webglrenderer *ngIf="isSelected('webgl')"></app-gameoflife-webglrenderer>
     `
 })
-export class RendererSelectorComponent extends Observable<Stratton.IGameOfLifeRenderer> {
+export class RendererSelectorComponent extends Observable<Stratton.GameOfLife.IRenderer> {
 
     private selectedRenderer: GameOfLifeRendererEnum = GameOfLifeRendererEnum.text;
-    private subscriber: Subscriber<Stratton.IGameOfLifeRenderer>;
+    private subscriber: Subscriber<Stratton.GameOfLife.IRenderer>;
 
     constructor() {
         super(observer => {
-            this.subscriber = new Subscriber<Stratton.IGameOfLifeRenderer>((val) => {
+            this.subscriber = new Subscriber<Stratton.GameOfLife.IRenderer>((val) => {
                 observer.next(val);
             });
         });

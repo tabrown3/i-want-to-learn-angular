@@ -3,15 +3,15 @@
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class GameOfLifeService implements Stratton.IGameOfLifeService {
+export class BoardService implements Stratton.GameOfLife.IBoardService {
 
-    readonly constraints: Stratton.IGameOfLifeConstraints;
-    renderer: Stratton.IGameOfLifeRenderer;
+    readonly constraints: Stratton.GameOfLife.IConstraints;
+    renderer: Stratton.GameOfLife.IRenderer;
     statebuffer0: Int8Array;
     statebuffer1: Int8Array;
     bufferInUse = 0;
 
-    readonly neighbours: Stratton.IPoint[] = [
+    readonly neighbours: Stratton.GameOfLife.IPoint[] = [
         {x: -1, y: -1}, {x:  0, y: -1}, {x:  1, y: -1},
         {x: -1, y:  0},               , {x:  1, y:  0},
         {x: -1, y:  1}, {x:  0, y:  1}, {x:  1, y:  1}

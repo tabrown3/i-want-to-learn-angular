@@ -1,12 +1,12 @@
 import { Component, ElementRef, ViewChild, Inject, OnInit } from '@angular/core';
 
-import { InjectToken} from '../../stratton.injection';
+import { InjectToken} from '../gameOfLife.injection';
 
 @Component({
     selector: 'app-gameoflife-textrenderer',
     template: `<div #div></div>`
 })
-export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
+export class TextRendererComponent implements Stratton.GameOfLife.IRenderer {
 
     @ViewChild('div') element: ElementRef;
 
@@ -16,11 +16,11 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
     rows = 0;
     cols = 0;
 
-    shouldRebuild(constraints: Stratton.IGameOfLifeConstraints): boolean {
+    shouldRebuild(constraints: Stratton.GameOfLife.IConstraints): boolean {
         return constraints.rows !== this.rows || constraints.cols !== this.cols;
     }
 
-    rebuildReferences(constraints: Stratton.IGameOfLifeConstraints) {
+    rebuildReferences(constraints: Stratton.GameOfLife.IConstraints) {
         this.rows = constraints.rows;
         this.cols = constraints.cols;
 
@@ -53,11 +53,11 @@ export class TextRendererComponent implements Stratton.IGameOfLifeRenderer {
         divStyle.backgroundColor = this.intToColor(constraints.deathColor);
     }
 
-    initialize(constraints: Stratton.IGameOfLifeConstraints) {
+    initialize(constraints: Stratton.GameOfLife.IConstraints) {
         this.rebuildReferences(constraints);
     }
 
-    render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
+    render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {
         if (this.shouldRebuild(constraints)) {
             return;
         }

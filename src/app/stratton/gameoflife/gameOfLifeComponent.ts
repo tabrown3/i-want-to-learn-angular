@@ -2,10 +2,10 @@ import {
     Component, OnInit, ElementRef, ViewChild,
     OnDestroy, NgZone, InjectionToken, Inject, AfterViewInit, QueryList } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { GameOfLifeService } from './gameOfLifeService';
+
 import { RendererSelectorComponent, GameOfLifeRendererEnum } from './renderers/RenderSelectorComponent';
 
-import { InjectToken} from '../stratton.injection';
+import { InjectToken} from './gameOfLife.injection';
 
 @Component({
     selector: 'app-game-of-life',
@@ -17,7 +17,7 @@ export class GameOfLifeComponent implements OnDestroy {
     renderer: RendererSelectorComponent;
 
     constructor(
-        @Inject(InjectToken.IGameOfLifeService) private gameOfLifeService: Stratton.IGameOfLifeService,
+        @Inject(InjectToken.IBoardService) private boardService: Stratton.GameOfLife.IBoardService,
         @Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference,
         private ngZone: NgZone
     ) {      }
@@ -26,9 +26,9 @@ export class GameOfLifeComponent implements OnDestroy {
     set rendererSelector(component: RendererSelectorComponent) {
         this.renderer = component;
         component.subscribe((renderer) => {
-            this.gameOfLifeService.renderer = renderer;
-            renderer.initialize(this.gameOfLifeService.constraints);
-            this.gameOfLifeService.render();
+            this.boardService.renderer = renderer;
+            renderer.initialize(this.boardService.constraints);
+            this.boardService.render();
         });
     }
 
@@ -36,8 +36,8 @@ export class GameOfLifeComponent implements OnDestroy {
         this.stopGame();
     }
 
-    get constraintModel(): Stratton.IGameOfLifeConstraints {
-        return this.gameOfLifeService.constraints;
+    get constraintModel(): Stratton.GameOfLife.IConstraints {
+        return this.boardService.constraints;
     }
 
     get selectedRendererType(): string {
@@ -64,14 +64,14 @@ export class GameOfLifeComponent implements OnDestroy {
 
     public resetGame(): void {
         this.stopGame();
-        this.gameOfLifeService.reset();
+        this.boardService.reset();
     }
 
     public randomize(): void {
         this.isRunning = false;
-        this.gameOfLifeService.reset();
-        this.gameOfLifeService.randomize();
-        this.gameOfLifeService.render();
+        this.boardService.reset();
+        this.boardService.randomize();
+        this.boardService.render();
     }
 
     private renderFrame(): void {
@@ -79,8 +79,8 @@ export class GameOfLifeComponent implements OnDestroy {
             return;
         }
 
-        this.gameOfLifeService.tick();
-        this.ngZone.run(() => this.gameOfLifeService.render());
+        this.boardService.tick();
+        this.ngZone.run(() => this.boardService.render());
 
         this.globalReference.setTimeout(() => {
             this.globalReference.requestAnimationFrame(() => this.renderFrame());

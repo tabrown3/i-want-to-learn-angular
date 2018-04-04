@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
   @Component({
     selector: 'app-stratton',
-    templateUrl: '../templates/stratton.component.html',
-    styleUrls: ['../content/stratton.component.css']
+    templateUrl: './stratton.component.html',
+    styleUrls: ['./stratton.component.css']
   })
   export class StrattonComponent implements OnInit {
 

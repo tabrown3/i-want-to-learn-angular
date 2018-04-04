@@ -2,13 +2,13 @@
 
 import { Component, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
 
-import { InjectToken } from '../../stratton.injection';
+import { InjectToken } from '../gameOfLife.injection';
 
 @Component({
     selector: 'app-gameoflife-canvasrenderer',
     template: `<canvas #canvas></canvas>`
 })
-export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfLifeRenderer {
+export class CanvasRendererComponent implements AfterViewInit, Stratton.GameOfLife.IRenderer {
 
     context: CanvasRenderingContext2D;
     scratchContext: CanvasRenderingContext2D;
@@ -22,14 +22,14 @@ export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfL
         this.scratchContext = this.globalReference.document.createElement('canvas').getContext('2d');
     }
 
-    initialize(constraints: Stratton.IGameOfLifeConstraints) {
+    initialize(constraints: Stratton.GameOfLife.IConstraints) {
         this.scratchContext.canvas.width = constraints.cols;
         this.scratchContext.canvas.height = constraints.rows;
 
         this.imageData = this.scratchContext.createImageData(constraints.cols, constraints.rows);
     }
 
-    render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
+    render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {
         const scale = constraints.cellSizeInPixels;
 
         this.context.canvas.width = constraints.cols * scale;

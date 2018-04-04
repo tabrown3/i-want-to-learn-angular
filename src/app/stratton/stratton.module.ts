@@ -4,22 +4,22 @@ import { RouterModule, Route } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { StrattonComponent } from './components/stratton.component';
-import { GameOfLifeService } from './gameoflife/gameOfLifeService';
+import { StrattonComponent } from './stratton.component';
+import { BoardService } from './gameoflife/boardService';
 import { GameOfLifeComponent } from './gameoflife/gameOfLifeComponent';
 
 // import { InjectToken } from './stratton.injection';
-import { InjectToken} from './stratton.injection';
+import { InjectToken} from './gameoflife/gameOfLife.injection';
 
 import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererComponent';
 import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';
 import { WebGlRendererComponent } from './gameoflife/renderers/WebGlRendererComponent';
 
 import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
-
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-    imports : [RouterModule, FormsModule, CommonModule],
+    imports : [RouterModule, FormsModule, CommonModule, HttpClientModule],
     declarations: [
         StrattonComponent, GameOfLifeComponent, CanvasRendererComponent,
         TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent],
@@ -29,8 +29,8 @@ import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelector
             useValue: window
         },
         {
-            provide: InjectToken.IGameOfLifeService,
-            useClass: GameOfLifeService
+            provide: InjectToken.IBoardService,
+            useClass: BoardService
         }]
 })
 export class StrattonModule {
