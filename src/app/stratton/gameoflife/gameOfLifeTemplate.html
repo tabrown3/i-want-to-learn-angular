@@ -1,41 +1,35 @@
 <app-gameoflife-renderselector></app-gameoflife-renderselector>
 
 <fieldset>
-    <legend>Options:</legend>
-
-    <label>Rows</label>
-    <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
-
-    <label>Columns</label>
-    <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
-
-    <label>Cell Size</label>
-    <input type="number" min="8" max="16" [(ngModel)]="constraintModel.cellSizeInPixels" />
-
-    <label>Surface is a torus</label>
-    <input [disabled]="isRunning" type="checkbox" [(ngModel)]="constraintModel.isTorus" (change)="resetGame()" />
-
     <label>Renderer</label>
     <select [(ngModel)]="selectedRendererType">
         <option value="text">Text</option>
         <option value="canvas">Canvas</option>
         <option value="webgl">WebGl</option>
     </select>
+
+    <br />
+
+    <label>Rows</label>
+    <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
+
+    <label>Columns</label>
+    <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
+    <br />
+    <label>Surface is a torus</label>
+    <input [disabled]="isRunning" type="checkbox" [(ngModel)]="constraintModel.isTorus" (change)="resetGame()" />
+
+    <label>Frame Delay (ms):</label>
+    <input type="number" min="0" max="1000" [(ngModel)]="constraintModel.frameDelay" />
+
+    <br />
+    <button (click)="randomize()" [disabled]="isRunning">Randomize</button>
+    <button (click)="startGame()" [disabled]="isRunning">Start</button>
+    <button (click)="stopGame()" [disabled]="!isRunning">Stop</button>
 </fieldset>
 
-<button (click)="randomize()" [disabled]="isRunning">Randomize</button>
-<button (click)="startGame()" [disabled]="isRunning">Start</button>
-<button (click)="stopGame()" [disabled]="!isRunning">Stop</button>
+
 
 
 <p>
 <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Conway's Game of Life</a>
-<br />
-<ul>
-    To dos:
-    <li>add more renderers</li>
-    <li>load prebuild or saved initial states</li>
-    <li>Manually edit field</li>
-    <li>drop common pattern into edit field</li>
-    <li>I also have a weird idea on how to game-ify the game of life...</li>
-</ul>

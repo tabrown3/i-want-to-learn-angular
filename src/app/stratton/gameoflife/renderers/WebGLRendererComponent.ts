@@ -2,7 +2,7 @@
 
 import { Component, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
 
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 
 import { InjectToken } from '../../stratton.injection';
 
@@ -61,6 +61,12 @@ export class WebGlRendererComponent implements AfterViewInit, Stratton.IGameOfLi
     modelViewMatrix: WebGLUniformLocation;
     normalMatrix: WebGLUniformLocation;
 
+    startPoint = [0, 0];
+    endPoint = [0, 0];
+    mouseDown = false;
+
+    xRot = -Math.PI / 3;
+    yRot = 0;
 
     buffers: any;
 
@@ -74,9 +80,49 @@ export class WebGlRendererComponent implements AfterViewInit, Stratton.IGameOfLi
             this.message = 'WebGl is not supported in your browser';
         }
 
+        // const elm = this.canvasElement.nativeElement as HTMLElement;
+        // {
+        //     elm.addEventListener('mousedown', (evt) => {
+        //         this.mouseDown = true;
+        //         this.startPoint[0] = evt.clientX;
+        //         this.startPoint[1] = evt.clientY;
+        //     });
+        //     elm.addEventListener('mousemove', (evt) => {
+        //         if (this.mouseDown) {
+        //             this.endPoint[0] = evt.clientX;
+        //             this.endPoint[1] = evt.clientY;
+        //         }
+        //     });
+        //     elm.addEventListener('mouseup', (evt) => {
+        //         if (this.mouseDown) {
+        //             this.mouseDown = false;
+        //             const deltas = this.getDeltas();
+        //             this.xRot = deltas[1];
+        //             this.yRot = deltas[0];
+        //         }
+        //     });
+        //     elm.addEventListener('mouseout', (evt) => {
+        //         if (this.mouseDown) {
+        //             this.mouseDown = false;
+        //             const deltas = this.getDeltas();
+        //             this.xRot = deltas[1];
+        //             this.yRot = deltas[0];
+        //         }
+        //     });
+        // }
+
         this.initShaderProgram();
         this.initBuffers();
         this.initAttributes();
+        this.loadCube();
+    }
+
+    getDeltas() {
+        const deltaX = this.endPoint[0] - this.startPoint[0];
+        const deltaY = this.endPoint[1] - this.startPoint[1];
+
+        return [ this.xRot + (deltaX / this.canvasElement.nativeElement.width) * Math.PI / 4,
+                 this.yRot + (deltaY / this.canvasElement.nativeElement.height) * Math.PI / 4];
     }
 
 /* the following code was lovingly lifted from, scraped
@@ -90,6 +136,16 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
         if (!this.isInitialized) {
             return;
         }
+
+        let currentXRot = this.xRot;
+        let currentYRot = this.yRot;
+
+        if (this.mouseDown) {
+            const deltas = this.getDeltas();
+            currentXRot = deltas[1];
+            currentYRot = deltas[0];
+        }
+
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
         this.gl.clearDepth(1.0);                 // Clear everything
         this.gl.enable(this.gl.DEPTH_TEST);           // Enable depth testing
@@ -131,7 +187,11 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
                         modelViewMatrix,     // matrix to translate
                         [-0.0, 10.0, -60.0]);  // amount to translate
 
-        mat4.rotateX(modelViewMatrix, modelViewMatrix, -Math.PI / 3);
+
+        // mat4.rotateX(modelViewMatrix, modelViewMatrix, currentXRot);
+        // mat4.rotateY(modelViewMatrix, modelViewMatrix, currentYRot);
+
+         mat4.rotateX(modelViewMatrix, modelViewMatrix, -Math.PI / 4);
 
         const normalMatrix = mat4.create();
         mat4.invert(normalMatrix, modelViewMatrix);
@@ -139,8 +199,6 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
 
         // Tell WebGL to use our program when drawing
         this.gl.useProgram(this.program);
-
-        this.loadCube();
 
         // Set the shader uniforms
 
