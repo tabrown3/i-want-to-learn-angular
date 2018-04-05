@@ -25,7 +25,7 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
             isTorus: true,
             livingColor: 0xFFFFFF,
             deathColor: 0x000000,
-            frameDelay: 100
+            frameDelay: 50
         };
 
         this.reset();

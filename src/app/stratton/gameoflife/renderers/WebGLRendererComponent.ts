@@ -1,6 +1,6 @@
 /* tslint:disable:no-bitwise */
 
-import { Component, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewChildren, Inject, QueryList } from '@angular/core';
 
 import { mat4, vec3 } from 'gl-matrix';
 
@@ -8,11 +8,14 @@ import { InjectToken } from '../gameOfLife.injection';
 
 import { GlslShaderDirective } from './GlslShaderDirective';
 
+import { Observable } from 'rxjs/Observable';
+import { zip } from 'rxjs/observable/zip';
+
 @Component({
     selector: 'app-gameoflife-webglrenderer',
-    templateUrl: './WebGlRendererTemplate.html',
+    templateUrl: './WebGlRendererTemplate.html'
 })
-export class WebGlRendererComponent implements AfterViewInit, Stratton.GameOfLife.IRenderer {
+export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     vertexShaderSource: string;
     fragmentShaderSource: string;
 
@@ -37,26 +40,50 @@ export class WebGlRendererComponent implements AfterViewInit, Stratton.GameOfLif
 
     buffers: any;
 
-    @ViewChild('canvas') canvasElement: ElementRef;
-
-    @ViewChild('shader')
-    set shaderDirective(directive: GlslShaderDirective) {
-        directive.subscribe()
+    @ViewChild('canvas')
+    set canvasElement(element: ElementRef) {
+        this.gl = element.nativeElement.getContext('webgl');
     }
 
-    @ViewChild('fragment')
-    set fragmentDirective(directive: GlslShaderDirective) {
-
-    }
+    @ViewChildren(GlslShaderDirective) shaders: QueryList<GlslShaderDirective>;
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
-    ngAfterViewInit(): void {
-        this.gl = this.canvasElement.nativeElement.getContext('webgl');
+    getDeltas() {
+        const deltaX = this.endPoint[0] - this.startPoint[0];
+        const deltaY = this.endPoint[1] - this.startPoint[1];
+
+        return [ this.xRot + (deltaX / this.canvasElement.nativeElement.width) * Math.PI / 4,
+                 this.yRot + (deltaY / this.canvasElement.nativeElement.height) * Math.PI / 4];
+    }
+
+/* the following code was lovingly lifted from, scraped
+and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/ */
+
+    initialize(constraints: Stratton.GameOfLife.IConstraints) {
         if (!this.gl) {
             this.message = 'WebGl is not supported in your browser';
+            return;
         }
 
+        const a = this.shaders.toArray();
+
+        zip(...this.shaders.toArray())
+        .subscribe((shaderSources) => {
+            this.vertexShaderSource = shaderSources
+            .find(x => x.shaderType === 'vertex')
+            .source;
+
+            this.fragmentShaderSource = shaderSources
+            .find(x => x.shaderType === 'fragment')
+            .source;
+
+            this.initShaderProgram();
+            this.initBuffers();
+            this.initAttributes();
+            this.loadCube();
+            this.isInitialized = true;
+        });
         // const elm = this.canvasElement.nativeElement as HTMLElement;
         // {
         //     elm.addEventListener('mousedown', (evt) => {
@@ -87,26 +114,6 @@ export class WebGlRendererComponent implements AfterViewInit, Stratton.GameOfLif
         //         }
         //     });
         // }
-
-        this.initShaderProgram();
-        this.initBuffers();
-        this.initAttributes();
-        this.loadCube();
-    }
-
-    getDeltas() {
-        const deltaX = this.endPoint[0] - this.startPoint[0];
-        const deltaY = this.endPoint[1] - this.startPoint[1];
-
-        return [ this.xRot + (deltaX / this.canvasElement.nativeElement.width) * Math.PI / 4,
-                 this.yRot + (deltaY / this.canvasElement.nativeElement.height) * Math.PI / 4];
-    }
-
-/* the following code was lovingly lifted from, scraped
-and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/ */
-
-    initialize(constraints: Stratton.GameOfLife.IConstraints) {
-        this.isInitialized = true;
     }
 
     render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {

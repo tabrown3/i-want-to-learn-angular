@@ -40,5 +40,10 @@ declare namespace Stratton.GameOfLife {
         initialize(constraints: IConstraints);
         render(state: Int8Array, constraints: IConstraints);
     }
+
+    export interface IGlslShaderSource {
+        shaderType: string;
+        source: string;
+    }
 }
 
