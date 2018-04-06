@@ -6,7 +6,7 @@ import { mat4, vec3 } from 'gl-matrix';
 
 import { InjectToken } from '../gameOfLife.injection';
 
-import { GlslShaderDirective } from './GlslShaderDirective';
+import { GlslShaderComponent } from './GlslShaderComponent';
 
 import { Observable } from 'rxjs/Observable';
 import { zip } from 'rxjs/observable/zip';
@@ -45,7 +45,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         this.gl = element.nativeElement.getContext('webgl');
     }
 
-    @ViewChildren(GlslShaderDirective) shaders: QueryList<GlslShaderDirective>;
+    @ViewChildren(GlslShaderComponent) shaders: QueryList<GlslShaderComponent>;
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
@@ -65,8 +65,6 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
             this.message = 'WebGl is not supported in your browser';
             return;
         }
-
-        const a = this.shaders.toArray();
 
         zip(...this.shaders.toArray())
         .subscribe((shaderSources) => {

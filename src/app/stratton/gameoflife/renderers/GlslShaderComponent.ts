@@ -1,15 +1,15 @@
 
-/* tslint:disable:directive-selector */
+/* tslint:disable:component-selector */
 
-import { Directive, ElementRef, ViewChild, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-@Directive({
+@Component({
     selector: 'glsl-shader'
 })
-export class GlslShaderDirective extends Observable<Stratton.GameOfLife.IGlslShaderSource> {
+export class GlslShaderComponent extends Observable<Stratton.GameOfLife.IGlslShaderSource> {
 
     constructor(private element: ElementRef, private http: HttpClient) {
         super(observer => {

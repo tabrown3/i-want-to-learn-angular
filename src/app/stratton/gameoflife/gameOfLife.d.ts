@@ -45,5 +45,15 @@ declare namespace Stratton.GameOfLife {
         shaderType: string;
         source: string;
     }
+
+    export interface IWebGlObject {
+        positions: number[],
+        cells: number[],
+        vertexUVs: number[],
+        faceUVs: number[],
+        vertexNormals: number[],
+        faceNormals: number[],
+        name: string
+    }
 }
 
