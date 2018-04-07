@@ -1,5 +1,11 @@
 <glsl-shader src="/stratton/assets/vert.glsl" type="vertex"></glsl-shader>
 <glsl-shader src="/stratton/assets/frag.glsl" type="fragment"></glsl-shader>
 
+<webgl-camera 
+    [fieldOfView]="45 * Math.PI / 180"
+    [aspect]="1080 / 600"
+    [zNear]="0.1"
+    [zFar]="100.0"    
+/>
 <canvas #canvas width="1080" height="600"></canvas>
 <span *ngIf="message">{{message}}</span>

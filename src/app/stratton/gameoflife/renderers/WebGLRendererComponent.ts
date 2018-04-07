@@ -7,6 +7,7 @@ import { mat4, vec3 } from 'gl-matrix';
 import { InjectToken } from '../gameOfLife.injection';
 
 import { GlslShaderComponent } from './GlslShaderComponent';
+import { WebGlCameraComponent } from './WebGlCameraComponent';
 
 import { Observable } from 'rxjs/Observable';
 import { zip } from 'rxjs/observable/zip';
@@ -30,14 +31,6 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     projectionMatrix: WebGLUniformLocation;
     modelViewMatrix: WebGLUniformLocation;
     normalMatrix: WebGLUniformLocation;
-
-    startPoint = [0, 0];
-    endPoint = [0, 0];
-    mouseDown = false;
-
-    xRot = -Math.PI / 3;
-    yRot = 0;
-
     buffers: any;
 
     @ViewChild('canvas')
@@ -46,16 +39,9 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     @ViewChildren(GlslShaderComponent) shaders: QueryList<GlslShaderComponent>;
+    @ViewChild(WebGlCameraComponent) camera: WebGlCameraComponent;
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
-
-    getDeltas() {
-        const deltaX = this.endPoint[0] - this.startPoint[0];
-        const deltaY = this.endPoint[1] - this.startPoint[1];
-
-        return [ this.xRot + (deltaX / this.canvasElement.nativeElement.width) * Math.PI / 4,
-                 this.yRot + (deltaY / this.canvasElement.nativeElement.height) * Math.PI / 4];
-    }
 
 /* the following code was lovingly lifted from, scraped
 and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/ */
@@ -82,50 +68,11 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
             this.loadCube();
             this.isInitialized = true;
         });
-        // const elm = this.canvasElement.nativeElement as HTMLElement;
-        // {
-        //     elm.addEventListener('mousedown', (evt) => {
-        //         this.mouseDown = true;
-        //         this.startPoint[0] = evt.clientX;
-        //         this.startPoint[1] = evt.clientY;
-        //     });
-        //     elm.addEventListener('mousemove', (evt) => {
-        //         if (this.mouseDown) {
-        //             this.endPoint[0] = evt.clientX;
-        //             this.endPoint[1] = evt.clientY;
-        //         }
-        //     });
-        //     elm.addEventListener('mouseup', (evt) => {
-        //         if (this.mouseDown) {
-        //             this.mouseDown = false;
-        //             const deltas = this.getDeltas();
-        //             this.xRot = deltas[1];
-        //             this.yRot = deltas[0];
-        //         }
-        //     });
-        //     elm.addEventListener('mouseout', (evt) => {
-        //         if (this.mouseDown) {
-        //             this.mouseDown = false;
-        //             const deltas = this.getDeltas();
-        //             this.xRot = deltas[1];
-        //             this.yRot = deltas[0];
-        //         }
-        //     });
-        // }
     }
 
     render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {
         if (!this.isInitialized) {
             return;
-        }
-
-        let currentXRot = this.xRot;
-        let currentYRot = this.yRot;
-
-        if (this.mouseDown) {
-            const deltas = this.getDeltas();
-            currentXRot = deltas[1];
-            currentYRot = deltas[0];
         }
 
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
@@ -137,67 +84,27 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        // Create a perspective matrix, a special matrix that is
-        // used to simulate the distortion of perspective in a camera.
-        // Our field of view is 45 degrees, with a width/height
-        // ratio that matches the display size of the canvas
-        // and we only want to see objects between 0.1 units
-        // and 100 units away from the camera.
-
-        const fieldOfView = 45 * Math.PI / 180;   // in radians
-        const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
-        const zNear = 0.1;
-        const zFar = 100.0;
-        const projectionMatrix = mat4.create();
-
-        // note: glmatrix.js always has the first argument
-        // as the destination to receive the result.
-        mat4.perspective(projectionMatrix,
-                        fieldOfView,
-                        aspect,
-                        zNear,
-                        zFar);
-
-        // Set the drawing position to the "identity" point, which is
-        // the center of the scene.
-        const modelViewMatrix = mat4.create();
-
-        // Now move the drawing position a bit to where we want to
-        // start drawing the square.
-
-        mat4.translate(modelViewMatrix,     // destination matrix
-                        modelViewMatrix,     // matrix to translate
-                        [-0.0, 10.0, -60.0]);  // amount to translate
-
-
-        // mat4.rotateX(modelViewMatrix, modelViewMatrix, currentXRot);
-        // mat4.rotateY(modelViewMatrix, modelViewMatrix, currentYRot);
-
-         mat4.rotateX(modelViewMatrix, modelViewMatrix, -Math.PI / 4);
-
         const normalMatrix = mat4.create();
-        mat4.invert(normalMatrix, modelViewMatrix);
+        mat4.invert(normalMatrix, this.camera.modelViewMatrix);
         mat4.transpose(normalMatrix, normalMatrix);
 
         // Tell WebGL to use our program when drawing
         this.gl.useProgram(this.program);
 
         // Set the shader uniforms
-
         this.gl.uniformMatrix4fv(
             this.projectionMatrix,
             false,
-            projectionMatrix);
+            this.camera.projectionMatrix);
         this.gl.uniformMatrix4fv(
             this.modelViewMatrix,
             false,
-            modelViewMatrix);
+            this.camera.modelViewMatrix);
 
         this.gl.uniformMatrix4fv(
             this.normalMatrix,
             false,
             normalMatrix);
-
 
         {
             const currentModelView = mat4.create();
@@ -206,7 +113,7 @@ and repurposed into angular from https://developer.mozilla.org/en-US/docs/Web/AP
                     const x = (i % constraints.cols) - constraints.cols / 2;
                     const y = (i / constraints.cols | 0) - constraints.rows / 2;
 
-                    mat4.translate(currentModelView, modelViewMatrix, [x, y, 0.0]);
+                    mat4.translate(currentModelView, this.camera.modelViewMatrix, [x, y, 0.0]);
                     mat4.scale(currentModelView, currentModelView, [0.5, 0.5, 0.5]);
                     this.gl.uniformMatrix4fv(
                         this.modelViewMatrix,

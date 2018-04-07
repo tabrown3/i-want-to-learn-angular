@@ -4,35 +4,34 @@ import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'webgl-object'
 })
-export class WebGlObjectComponent {
+export class WebGlObjectComponent extends Observable<Stratton.GameOfLife.IWebGlObject> {
 
     constructor(private element: ElementRef, private http: HttpClient) {
-        const url = element.nativeElement.getAttribute('src');
-        const type = element.nativeElement.getAttribute('type');
-        if (type === 'obj') {
+        super(observer => {
+            const url = element.nativeElement.getAttribute('src');
             this.http
                 .get(url, {responseType: 'text'})
-                .subscribe(source => {
-
-                }, console.log);
-        }
-
+                .pipe(map(this.parse))
+                .subscribe(observer.next, console.log);
+        });
     }
 
-
-    function parse(str) {
+    parse(str): Stratton.GameOfLife.IWebGlObject {
         const lines = str.trim().split('\n');
-        const positions = [];
-        const cells = [];
-        const vertexUVs = [];
-        const vertexNormals = [];
-        const faceUVs = [];
-        const faceNormals = [];
-        const name = null;
+        const mesh = {
+            positions: [],
+            cells: [],
+            vertexUVs: null,
+            faceUVs: null,
+            vertexNormals: null,
+            faceNormals: null,
+            name: null
+          };
 
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
@@ -46,98 +45,66 @@ export class WebGlObjectComponent {
             .replace(/ +/g, ' ')
             .split(' ');
 
-          switch(parts[0]) {
+          switch (parts[0]) {
             case 'o':
-              name = parts.slice(1).join(' ');
+              mesh.name = parts.slice(1).join(' ');
               break;
             case 'v':
-              var position = parts.slice(1).map(Number).slice(0, 3);
-              positions.push(position);
+              mesh.positions.push(parts.slice(1).map(Number).slice(0, 3));
               break;
             case 'vt':
-              var uv = parts.slice(1).map(Number);
-              vertexUVs.push(uv);
+              mesh.vertexUVs = mesh.vertexUVs || [];
+              mesh.vertexUVs.push(parts.slice(1).map(Number));
               break;
             case 'vn':
-              var normal = parts.slice(1).map(Number);
-              vertexNormals.push(normal);
+              mesh.vertexNormals = mesh.vertexNormals || [];
+              mesh.vertexNormals.push(parts.slice(1).map(Number));
               break;
             case 'f':
-              var positionIndices = [];
-              var uvIndices = [];
-              var normalIndices = [];
-      
+              const positionIndices = [];
+              const uvIndices = [];
+              const normalIndices = [];
+
               parts
                 .slice(1)
-                .forEach(function(part) {
-                  var indices = part
+                .forEach(part => {
+                  const indices = part
                     .split('/')
-                    .map(function(index) {
-                      if(index === '') {
-                        return NaN;
-                      }
-                      return Number(index);
-                    })
-      
-                  positionIndices.push(convertIndex(indices[0], positions.length));
-      
-                  if(indices.length > 1) {
-                    if(!isNaN(indices[1])) {
-                      uvIndices.push(convertIndex(indices[1], vertexUVs.length));
+                    .map(index => index === '' ? NaN : Number(index));
+
+                  positionIndices.push(this.convertIndex(indices[0], mesh.positions.length));
+
+                  if (indices.length > 1) {
+                    if (!isNaN(indices[1])) {
+                      uvIndices.push(this.convertIndex(indices[1], mesh.vertexUVs.length));
                     }
-                    if(!isNaN(indices[2])) {
-                      normalIndices.push(convertIndex(indices[2], vertexNormals.length));
+                    if (!isNaN(indices[2])) {
+                      normalIndices.push(this.convertIndex(indices[2], mesh.vertexNormals.length));
                     }
                   }
-      
                 });
-      
-                cells.push(positionIndices);
-      
-                if(uvIndices.length > 0) {
-                  faceUVs.push(uvIndices);
+
+                mesh.cells.push(positionIndices);
+
+                if (uvIndices.length > 0) {
+                  mesh.faceUVs = mesh.faceUVs || [];
+                  mesh.faceUVs.push(uvIndices);
                 }
-                if(normalIndices.length > 0) {
-                  faceNormals.push(normalIndices);
+                if (normalIndices.length > 0) {
+                  mesh.faceNormals = mesh.faceNormals || [];
+                  mesh.faceNormals.push(normalIndices);
                 }
-                
+
               break;
             default:
               // skip
           }
-      
         }
-      
-        var mesh = {
-          positions: positions,
-          cells: cells
-        };
-      
-        if(vertexUVs.length > 0) {
-          mesh.vertexUVs = vertexUVs;
-        }
-      
-        if(faceUVs.length > 0) { 
-          mesh.faceUVs = faceUVs;
-        }
-      
-        if(vertexNormals.length > 0) {
-          mesh.vertexNormals = vertexNormals;
-        }
-      
-        if(faceNormals.length > 0) {
-          mesh.faceNormals = faceNormals;
-        }
-      
-        if(name !== null) {
-          mesh.name = name;
-        }
-      
+
         return mesh;
       }
-      
-      function convertIndex(objIndex, arrayLength) {
+
+      convertIndex(objIndex, arrayLength) {
         return objIndex > 0 ? objIndex - 1 : objIndex + arrayLength;
       }
-
 }
