@@ -46,14 +46,42 @@ declare namespace Stratton.GameOfLife {
         source: string;
     }
 
-    export interface IWebGlObject {
-        positions: number[],
-        cells: number[],
-        vertexUVs: number[],
-        faceUVs: number[],
-        vertexNormals: number[],
-        faceNormals: number[],
-        name: string
+    export interface IWebGlMesh {
+        positions: number[];
+        cells: number[];
+        vertexUVs: number[];
+        faceUVs: number[];
+        vertexNormals: number[];
+        faceNormals: number[];
+        name: string;
+        faceCount: number;
     }
+
+    export interface IWebGlObject {
+        readonly name: string;
+        bind(attributes: Stratton.GameOfLife.IWebGlAttributes): void;
+        draw(): void;
+    }
+
+    export interface IWebGlObjectBuffers {
+        position: any;
+        normal: any;
+        color: any;
+        indices: any;
+    }
+
+    export interface IWebGlAttributes {
+        vertexPosition: any;
+        vertexColor: any;
+        vertexNormal: any;
+    }
+
+    export interface IWebGlUniformLocations {
+        projectionMatrix: WebGLUniformLocation;
+        modelViewMatrix: WebGLUniformLocation;
+        normalMatrix: WebGLUniformLocation;
+    }
+
+    
 }
 

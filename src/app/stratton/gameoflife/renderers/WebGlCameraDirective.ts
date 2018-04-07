@@ -1,13 +1,13 @@
 
-/* tslint:disable:component-selector */
+/* tslint:disable:directive-selector */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Directive, Input, OnInit } from '@angular/core';
 import { mat4 } from 'gl-matrix';
 
-@Component({
+@Directive({
     selector: 'webgl-camera'
 })
-export class WebGlCameraComponent implements OnInit {
+export class WebGlCameraDirective implements OnInit {
 
     @Input() fieldOfView: number;
     @Input() aspect: number;

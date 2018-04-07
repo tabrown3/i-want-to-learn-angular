@@ -15,6 +15,8 @@ import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererCo
 import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';
 import { WebGlRendererComponent } from './gameoflife/renderers/WebGlRendererComponent';
 import { GlslShaderDirective } from './gameoflife/renderers/GlslShaderDirective';
+import { WebGlCanvasDirective } from './gameoflife/renderers/WebGlCanvasDirective'
+import { WebGlObjectComponent } from './gameoflife/renderers/WebGlObjectComponent';
 
 import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
 import { HttpClientModule } from '@angular/common/http';
@@ -23,7 +25,8 @@ import { HttpClientModule } from '@angular/common/http';
     imports : [RouterModule, FormsModule, CommonModule, HttpClientModule],
     declarations: [
         StrattonComponent, GameOfLifeComponent, CanvasRendererComponent,
-        TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent, GlslShaderDirective],
+        TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent, 
+        WebGlCanvasDirective, WebGlObjectComponent, GlslShaderDirective],
     providers: [
         {
             provide: InjectToken.IGlobalReference,
