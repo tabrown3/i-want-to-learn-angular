@@ -1,10 +1,9 @@
-/* tslint:disable:directive-selector */
-
 import { Directive } from '@angular/core';
 import { ElementRef } from '@angular/core/src/linker/element_ref';
 
 @Directive({
-    selector: 'webgl-canvas'
+    selector: 'webgl-canvas',
+    exportAs: 'webgl-canvas'
 })
 export class WebGlCanvasDirective  {
 
