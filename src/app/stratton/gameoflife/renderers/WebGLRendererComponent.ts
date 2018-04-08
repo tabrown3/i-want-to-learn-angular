@@ -1,5 +1,5 @@
 /* tslint:disable:no-bitwise */
-import { Component, ElementRef, ViewChild, ViewChildren, Inject, QueryList } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewChildren, Inject, QueryList, Output, EventEmitter } from '@angular/core';
 import { mat4, vec3 } from 'gl-matrix';
 import { InjectToken } from '../gameOfLife.injection';
 import { GlslShaderDirective } from './GlslShaderDirective';
@@ -9,7 +9,7 @@ import { zip } from 'rxjs/observable/zip';
 import { WebGlCanvasDirective } from './WebGlCanvasDirective';
 import { WebGlObjectDirective, MathDirective } from './WebGlObjectDirective';
 import { map } from 'rxjs/operators';
-
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 @Component({
     selector: 'app-gameoflife-webglrenderer',
@@ -36,6 +36,9 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     initialize(constraints: Stratton.GameOfLife.IConstraints) {
+
+        this.setUpEvents();
+
         if (this.program) {
             const shaders = this.gl.getAttachedShaders(this.program);
             for (let i = 0; shaders && i < shaders.length; i++) {
@@ -61,6 +64,29 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
                 this.isInitialized = true;
             });            
         });
+    }
+
+    private setUpEvents() {
+
+        fromEvent(this.globalReference.document, 'keydown')
+        .subscribe((event: KeyboardEvent) => {
+            switch (event.key) {
+                case 'w':
+                case 's':
+                    mat4.translate(this.camera.modelViewMatrix,
+                        this.camera.modelViewMatrix, 
+                        [0, 0, event.key === 'w' ? 1 : -1]);
+                    break;
+                case 'a':
+                case 'd':
+                    mat4.translate(this.camera.modelViewMatrix,
+                        this.camera.modelViewMatrix, 
+                        [event.key === 'a' ? 1 : -1, 0, 0]);
+                break;
+                default: break;
+            }
+        });
+
     }
 
     render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {

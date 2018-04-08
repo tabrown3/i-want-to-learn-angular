@@ -13,6 +13,7 @@ export class WebGlCameraDirective implements OnInit {
     @Input() aspect: number;
     @Input() zNear: number;
     @Input() zFar: number;
+    @Input() initModelViewMatrix: number[];
 
     readonly projectionMatrix = mat4.create();
     readonly modelViewMatrix = mat4.create();
@@ -22,9 +23,7 @@ export class WebGlCameraDirective implements OnInit {
             this.fieldOfView,
             this.aspect,
             this.zNear,
-            this.zFar);
-        mat4.translate(this.modelViewMatrix,
-            this.modelViewMatrix,
-            [-0.0, 0.0, -6.0]);
+            this.zFar);        
+        mat4.set(this.modelViewMatrix, ...this.initModelViewMatrix);
     }
 }

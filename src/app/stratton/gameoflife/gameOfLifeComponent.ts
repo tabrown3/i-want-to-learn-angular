@@ -26,9 +26,12 @@ export class GameOfLifeComponent implements OnDestroy {
     set rendererSelector(component: RendererSelectorComponent) {
         this.renderer = component;
         component.subscribe((renderer) => {
-            this.boardService.renderer = renderer;
+            var initState = !this.boardService.renderer;            
+            this.boardService.renderer = renderer;            
             renderer.initialize(this.boardService.constraints);
-            this.boardService.render();
+            if (initState){
+                this.renderFrame();
+            }
         });
     }
 
@@ -55,7 +58,6 @@ export class GameOfLifeComponent implements OnDestroy {
 
     public startGame(): void {
         this.isRunning = true;
-        this.ngZone.runOutsideAngular(() => this.renderFrame());
     }
 
     public stopGame(): void {
@@ -71,15 +73,13 @@ export class GameOfLifeComponent implements OnDestroy {
         this.isRunning = false;
         this.boardService.reset();
         this.boardService.randomize();
-        this.boardService.render();
     }
 
     private renderFrame(): void {
-        if (!this.isRunning) {
-            return;
+        if (this.isRunning) {
+            this.boardService.tick();
         }
-
-        this.boardService.tick();
+        
         this.ngZone.run(() => this.boardService.render());
 
         this.globalReference.setTimeout(() => {

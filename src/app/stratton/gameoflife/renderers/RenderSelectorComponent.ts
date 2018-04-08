@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, Inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TextRendererComponent } from '../renderers/TextRendererComponent';
