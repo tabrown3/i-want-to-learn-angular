@@ -97,17 +97,11 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
 
     private parse(str): Stratton.GameOfLife.IWebGlMesh {
         const lines = str.trim().split('\n');
-        const mesh = {
-            vertices: [],
-            indices: [],
-            textUVs: null,
-            normals: null,
-            
-            name: null,
-            faceCount: 0
-          };
-
-          const tempNormals = [];
+        
+        let name: string = null;
+        const tempNormals = [];
+        const tempVectors = [];
+        const faces: {v:number, n: number}[][] = [];
 
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
@@ -121,53 +115,59 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
             .replace(/ +/g, ' ')
             .split(' ');
 
+          const values = parts.slice(1);
+
           switch (parts[0]) {
             case 'o':
-              mesh.name = parts.slice(1).join(' ');
+              name = values.join(' ');
               break;
             case 'v':
-              mesh.vertices.push(...parts.slice(1).map(Number).slice(0, 3));
+              tempVectors.push(...values.map(Number));
               break;
             case 'vt':
-              mesh.textUVs = mesh.textUVs || [];
-              mesh.textUVs.push(...parts.slice(1).map(Number));
+            //  mesh.textUVs = mesh.textUVs || [];
+             // mesh.textUVs.push(...parts.slice(1).map(Number));
               break;
             case 'vn':
-              tempNormals.push(...parts.slice(1).map(Number));
+              tempNormals.push(...values.map(Number));
               break;
             case 'f':
-                                        
-              parts
-                .slice(1)
-                .forEach(part => {
-                  const indices = part
-                    .split('/')
-                    .map(index => index === '' ? NaN : Number(index));
-
-                    //may need to support negative values
-                  mesh.indices.push(indices[0]-1);
-
-                  if (indices.length > 1) {
-                    if (!isNaN(indices[1])) {
-                      //not supported yet
-                    }
-                    if (!isNaN(indices[2])) {
-                      mesh.normals = mesh.normals || [];
-                      mesh.normals.push(...tempNormals.slice(indices[2], indices[2] + 3));                      
-                    }
-                  }
-                });
-
-                
-
-                mesh.faceCount++;                
-
+                faces.push(values.map(indices => {
+                  const p = indices.split('/').map(index => index === '' ? NaN : Number(index)-1);
+                  return { v: p[0], n: p[2] };
+                }));
               break;
             default:
               // skip
           }
         }
 
-        return mesh;
+        const vertices = [];
+        const normals = [];
+        const indices = [];
+        const lookup = new Array(tempNormals.length * tempVectors.length / 9).fill(NaN);
+        let nextIndex = 0;
+        faces.forEach(face=> {
+          face.forEach(point => {
+            if (isNaN(lookup[point.v * tempNormals.length / 3 + point.n ])) {
+              lookup[point.v * tempNormals.length / 3 + point.n ] = nextIndex;
+              indices.push(nextIndex);
+              vertices.push(...tempVectors.slice(point.v * 3, point.v * 3 +3));
+              normals.push(...tempNormals.slice(point.n * 3, point.n * 3 +3));
+              nextIndex++;
+            } else {
+              indices.push(lookup[point.v * tempNormals.length / 3 + point.n ]);
+            }
+          })
+        });
+
+        return {
+          name: name,   
+          vertices: vertices,
+          normals: normals, 
+          indices: indices,       
+          textUVs: null,
+          faceCount: faces.length
+        };
       }
 }

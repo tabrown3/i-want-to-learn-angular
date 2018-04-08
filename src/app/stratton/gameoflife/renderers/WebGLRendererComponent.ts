@@ -104,7 +104,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
             for (let i = 0; i < state.length; i++) {
                 if (state[i]) {
                     const x = (i % constraints.cols) - constraints.cols / 2;
-                    const y = (i / constraints.cols | 0) - constraints.rows / 2;
+                    const y = -((i / constraints.cols | 0) - constraints.rows / 2);
 
                     mat4.translate(currentModelView, this.camera.modelViewMatrix, [x, y, 0.0]);
                     this.gl.uniformMatrix4fv(
