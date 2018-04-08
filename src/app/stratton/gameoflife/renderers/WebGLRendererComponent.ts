@@ -68,9 +68,14 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
     private setUpEvents() {
 
+        let mouseMoveUnsubscribe: any;
+
         fromEvent(this.globalReference.document, 'keydown')
         .subscribe((event: KeyboardEvent) => {
             switch (event.key) {
+                case 'Escape':
+                this.globalReference.document.exitPointerLock();
+                break;
                 case 'w':
                 case 's':
                     mat4.translate(this.camera.modelViewMatrix,
@@ -87,6 +92,31 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
             }
         });
 
+
+        fromEvent(this.canvas.context.canvas, 'click',)
+        .subscribe((event: MouseEvent) => {
+            this.canvas.context.canvas.requestPointerLock();
+        });
+
+        fromEvent(this.globalReference.document, 'pointerlockchange')
+        .subscribe(()=> {
+            if (this.globalReference.document.pointerLockElement === this.canvas.context.canvas) {   
+                mouseMoveUnsubscribe = fromEvent(this.globalReference.document, 'mousemove')
+                .subscribe((event: MouseEvent)=>{
+
+                    var trans = vec3.create();
+                    var temp = mat4.create();
+                    mat4.getTranslation(trans, this.camera.modelViewMatrix);
+                    mat4.translate(temp, temp, trans);
+                    mat4.rotate(temp, temp, 
+                        event.movementX * this.camera.fieldOfView / this.canvas.context.canvas.width
+                    , [0,1,0]);
+                    mat4.copy(this.camera.modelViewMatrix, temp);
+                });
+            } else {              
+                mouseMoveUnsubscribe.unsubscribe();
+            }
+        });
     }
 
     render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {
