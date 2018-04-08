@@ -23,5 +23,8 @@ export class WebGlCameraDirective implements OnInit {
             this.aspect,
             this.zNear,
             this.zFar);
+        mat4.translate(this.modelViewMatrix,
+            this.modelViewMatrix,
+            [-0.0, 0.0, -60.0]);
     }
 }

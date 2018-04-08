@@ -16,7 +16,7 @@ import { TextRendererComponent } from './gameoflife/renderers/TextRendererCompon
 import { WebGlRendererComponent } from './gameoflife/renderers/WebGlRendererComponent';
 import { GlslShaderDirective } from './gameoflife/renderers/GlslShaderDirective';
 import { WebGlCanvasDirective } from './gameoflife/renderers/WebGlCanvasDirective'
-import { WebGlObjectDirective } from './gameoflife/renderers/WebGlObjectDirective';
+import { WebGlObjectDirective, MathDirective } from './gameoflife/renderers/WebGlObjectDirective';
 import { WebGlCameraDirective } from './gameoflife/renderers/WebGlCameraDirective';
 
 import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
@@ -26,7 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
     imports : [RouterModule, FormsModule, CommonModule, HttpClientModule],
     declarations: [
         StrattonComponent, GameOfLifeComponent, CanvasRendererComponent,
-        TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent, 
+        TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent, MathDirective,
         WebGlCanvasDirective, WebGlObjectDirective, GlslShaderDirective, WebGlCameraDirective],
     providers: [
         {

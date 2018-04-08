@@ -7,6 +7,16 @@ import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 
 @Directive({
+  selector: '[globalMath]',
+  exportAs: 'Math'
+})
+export class MathDirective {
+  constructor(){
+    return Math;
+  }
+}
+
+@Directive({
     selector: 'webgl-object'
 })
 export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlObject> {
@@ -17,7 +27,7 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
         const name = element.nativeElement.getAttribute('name');
         this.http
             .get(url, {responseType: 'text'})
-            .pipe(map(this.parse))
+            .pipe(map(data => this.parse(data)))
             .subscribe(val => {
               this.mesh = val;
               this.load();
@@ -72,13 +82,13 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
       };
 
       this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.position);
-      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.positions), this.context.STATIC_DRAW);
+      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), this.context.STATIC_DRAW);
 
       this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.normal);
-      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.vertexNormals), this.context.STATIC_DRAW);
+      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.normals), this.context.STATIC_DRAW);
 
       this.context.bindBuffer(this.context.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-      this.context.bufferData(this.context.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.mesh.cells), this.context.STATIC_DRAW);
+      this.context.bufferData(this.context.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.mesh.indices), this.context.STATIC_DRAW);
 
       //this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.color);
       //this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.), this.context.STATIC_DRAW);
@@ -88,15 +98,16 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
     private parse(str): Stratton.GameOfLife.IWebGlMesh {
         const lines = str.trim().split('\n');
         const mesh = {
-            positions: [],
-            cells: [],
-            vertexUVs: null,
-            faceUVs: null,
-            vertexNormals: null,
-            faceNormals: null,
+            vertices: [],
+            indices: [],
+            textUVs: null,
+            normals: null,
+            
             name: null,
             faceCount: 0
           };
+
+          const tempNormals = [];
 
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
@@ -115,21 +126,17 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
               mesh.name = parts.slice(1).join(' ');
               break;
             case 'v':
-              mesh.positions.push(parts.slice(1).map(Number).slice(0, 3));
+              mesh.vertices.push(...parts.slice(1).map(Number).slice(0, 3));
               break;
             case 'vt':
-              mesh.vertexUVs = mesh.vertexUVs || [];
-              mesh.vertexUVs.push(parts.slice(1).map(Number));
+              mesh.textUVs = mesh.textUVs || [];
+              mesh.textUVs.push(...parts.slice(1).map(Number));
               break;
             case 'vn':
-              mesh.vertexNormals = mesh.vertexNormals || [];
-              mesh.vertexNormals.push(parts.slice(1).map(Number));
+              tempNormals.push(...parts.slice(1).map(Number));
               break;
             case 'f':
-              const positionIndices = [];
-              const uvIndices = [];
-              const normalIndices = [];
-
+                                        
               parts
                 .slice(1)
                 .forEach(part => {
@@ -137,30 +144,23 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
                     .split('/')
                     .map(index => index === '' ? NaN : Number(index));
 
-                  positionIndices.push(this.convertIndex(indices[0], mesh.positions.length));
+                    //may need to support negative values
+                  mesh.indices.push(indices[0]-1);
 
                   if (indices.length > 1) {
                     if (!isNaN(indices[1])) {
-                      uvIndices.push(this.convertIndex(indices[1], mesh.vertexUVs.length));
+                      //not supported yet
                     }
                     if (!isNaN(indices[2])) {
-                      normalIndices.push(this.convertIndex(indices[2], mesh.vertexNormals.length));
+                      mesh.normals = mesh.normals || [];
+                      mesh.normals.push(...tempNormals.slice(indices[2], indices[2] + 3));                      
                     }
                   }
                 });
 
-                mesh.cells.push(...positionIndices);
+                
 
-                mesh.faceCount++;
-
-                if (uvIndices.length > 0) {
-                  mesh.faceUVs = mesh.faceUVs || [];
-                  mesh.faceUVs.push(uvIndices);
-                }
-                if (normalIndices.length > 0) {
-                  mesh.faceNormals = mesh.faceNormals || [];
-                  mesh.faceNormals.push(normalIndices);
-                }
+                mesh.faceCount++;                
 
               break;
             default:
@@ -169,9 +169,5 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
         }
 
         return mesh;
-      }
-
-      private convertIndex(objIndex, arrayLength) {
-        return objIndex > 0 ? objIndex - 1 : objIndex + arrayLength;
       }
 }

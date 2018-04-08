@@ -7,8 +7,9 @@ import { WebGlCameraDirective } from './WebGlCameraDirective';
 import { Observable } from 'rxjs/Observable';
 import { zip } from 'rxjs/observable/zip';
 import { WebGlCanvasDirective } from './WebGlCanvasDirective';
-import { WebGlObjectDirective } from './WebGlObjectDirective';
+import { WebGlObjectDirective, MathDirective } from './WebGlObjectDirective';
 import { map } from 'rxjs/operators';
+
 
 @Component({
     selector: 'app-gameoflife-webglrenderer',
@@ -23,7 +24,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
     @ViewChildren(GlslShaderDirective) shaders: QueryList<GlslShaderDirective>;
     @ViewChild(WebGlCameraDirective) camera: WebGlCameraDirective;
-    @ViewChild(WebGlObjectDirective) objects: QueryList<WebGlObjectDirective>;
+    @ViewChildren(WebGlObjectDirective) objects: QueryList<WebGlObjectDirective>;
     @ViewChild(WebGlCanvasDirective) canvas: WebGlCanvasDirective;
 
     cube: Stratton.GameOfLife.IWebGlObject;
@@ -48,11 +49,12 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
             this.program = this.gl.createProgram();
             shaderSources
-                .map(x => this.loadShader(x.shaderType === 'vertex' ? this.gl.VERTEX_SHADER : this.gl.FRAGMENT_SHADER, x))
+                .map(x => this.loadShader(x.shaderType === 'vertex' ? this.gl.VERTEX_SHADER : this.gl.FRAGMENT_SHADER, x.source))
                 .forEach(x => this.gl.attachShader(this.program, x));
             
             this.gl.linkProgram(this.program);
             this.initAttributes();
+            
             zip(...this.objects.toArray())
             .subscribe((webGlObjects) => {
                 this.cube = webGlObjects.find(x => x.name === "cube");                
@@ -105,7 +107,6 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
                     const y = (i / constraints.cols | 0) - constraints.rows / 2;
 
                     mat4.translate(currentModelView, this.camera.modelViewMatrix, [x, y, 0.0]);
-                    mat4.scale(currentModelView, currentModelView, [0.5, 0.5, 0.5]);
                     this.gl.uniformMatrix4fv(
                         this.uniformLocations.modelViewMatrix,
                         false,
@@ -123,6 +124,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         this.gl.shaderSource(shader, source);
         this.gl.compileShader(shader);
         if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+            alert('An error occurred compiling the shaders: ' + this.gl.getShaderInfoLog(shader));
             this.gl.deleteShader(shader);
             return null;
         }
@@ -130,12 +132,13 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     private initAttributes() {
+        
         this.attributes = {
             vertexPosition : this.gl.getAttribLocation(this.program, 'aVertexPosition'),
             vertexColor : this.gl.getAttribLocation(this.program, 'aVertexColor'),
             vertexNormal : this.gl.getAttribLocation(this.program, 'aVertexNormal')
         };
-        
+
         this.uniformLocations = {
             projectionMatrix : this.gl.getUniformLocation(this.program, 'uProjectionMatrix'),
             modelViewMatrix : this.gl.getUniformLocation(this.program, 'uModelViewMatrix'),

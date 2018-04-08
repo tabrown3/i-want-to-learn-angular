@@ -18,7 +18,7 @@ export class GlslShaderDirective extends Observable<Stratton.GameOfLife.IGlslSha
             this.http
                 .get(url, {responseType: 'text'})
                 .pipe(map(source => ({ source: source, shaderType: type })))
-                .subscribe(observer.next, console.log);
+                .subscribe(val => observer.next(val), console.log);
         });
     }
 }

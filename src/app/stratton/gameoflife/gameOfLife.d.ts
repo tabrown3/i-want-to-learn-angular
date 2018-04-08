@@ -47,12 +47,11 @@ declare namespace Stratton.GameOfLife {
     }
 
     export interface IWebGlMesh {
-        positions: number[];
-        cells: number[];
-        vertexUVs: number[];
-        faceUVs: number[];
-        vertexNormals: number[];
-        faceNormals: number[];
+        vertices: number[];
+        indices: number[];
+        textUVs: number[];        
+        normals: number[];
+        
         name: string;
         faceCount: number;
     }

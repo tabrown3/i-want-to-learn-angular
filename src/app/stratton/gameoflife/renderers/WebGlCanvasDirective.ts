@@ -1,9 +1,8 @@
-import { Directive } from '@angular/core';
-import { ElementRef } from '@angular/core/src/linker/element_ref';
+import { Directive, ElementRef } from '@angular/core';
 
 @Directive({
-    selector: 'webgl-canvas',
-    exportAs: 'webgl-canvas'
+    selector: '[webglCanvas]',
+    exportAs: 'webglCanvas'
 })
 export class WebGlCanvasDirective  {
 

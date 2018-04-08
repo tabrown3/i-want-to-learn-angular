@@ -1,11 +1,11 @@
-<canvas #canvas="webgl-canvas" width="1080" height="600"></canvas>
+<canvas webglCanvas #canvas="webglCanvas" width="1080" height="600"></canvas>
 
 <glsl-shader src="/stratton/assets/vert.glsl" type="vertex"></glsl-shader>
 <glsl-shader src="/stratton/assets/frag.glsl" type="fragment"></glsl-shader>
 
-<webgl-object src="/stratton/assets/cube.obj" name="cube"></webgl-object>
+<webgl-object [context]="canvas.context" src="/stratton/assets/cube.obj" name="cube"></webgl-object>
 
-<webgl-camera 
+<webgl-camera globalMath #Math="Math"
     [fieldOfView]="45 * Math.PI / 180"
     [aspect]="1080 / 600"
     [zNear]="0.1"
