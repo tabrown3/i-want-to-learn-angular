@@ -34,6 +34,8 @@ declare namespace Stratton.GameOfLife {
         tick(): void;
         randomize(): void;
         render(): void;
+
+        loadFromFile(file: File);
     }
 
     export interface IRenderer {

@@ -14,7 +14,7 @@ export class GlslShaderDirective extends Observable<Stratton.GameOfLife.IGlslSha
     constructor(private element: ElementRef, private http: HttpClient) {
         super(observer => {
             const url = element.nativeElement.getAttribute('src');
-            const type = element.nativeElement.getAttribute('type');            
+            const type = element.nativeElement.getAttribute('type');
             this.http
                 .get(url, {responseType: 'text'})
                 .pipe(map(source => ({ source: source, shaderType: type })))

@@ -19,6 +19,8 @@ import { WebGlCanvasDirective } from './gameoflife/renderers/WebGlCanvasDirectiv
 import { WebGlObjectDirective, MathDirective } from './gameoflife/renderers/WebGlObjectDirective';
 import { WebGlCameraDirective } from './gameoflife/renderers/WebGlCameraDirective';
 
+import { DropFileDirective } from './gameoflife/dropFileDirective';
+
 import { RendererSelectorComponent } from './gameoflife/renderers/RenderSelectorComponent';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -27,7 +29,7 @@ import { HttpClientModule } from '@angular/common/http';
     declarations: [
         StrattonComponent, GameOfLifeComponent, CanvasRendererComponent,
         TextRendererComponent, RendererSelectorComponent, WebGlRendererComponent, MathDirective,
-        WebGlCanvasDirective, WebGlObjectDirective, GlslShaderDirective, WebGlCameraDirective],
+        WebGlCanvasDirective, WebGlObjectDirective, GlslShaderDirective, WebGlCameraDirective, DropFileDirective],
     providers: [
         {
             provide: InjectToken.IGlobalReference,

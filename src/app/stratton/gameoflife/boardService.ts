@@ -1,6 +1,7 @@
 /* tslint:disable:no-bitwise */
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { InjectToken} from './gameOfLife.injection';
 
 @Injectable()
 export class BoardService implements Stratton.GameOfLife.IBoardService {
@@ -17,7 +18,7 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
         {x: -1, y:  1}, {x:  0, y:  1}, {x:  1, y:  1}
     ];
 
-    constructor() {
+    constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {
         this.constraints = {
             rows: 64,
             cols: 64,
@@ -99,5 +100,32 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
         }
     }
 
+    loadFromFile(file: File) {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+
+        image.onload = () => {
+            URL.revokeObjectURL(url);
+            const context = this.globalReference.document.createElement('canvas').getContext('2d');
+            context.canvas.width = image.width;
+            context.canvas.height = image.height;
+            context.mozImageSmoothingEnabled = false;
+            context.webkitImageSmoothingEnabled = false;
+            context.imageSmoothingEnabled = false;
+            context.drawImage(image, 0, 0);
+            const imageData = context.getImageData(0, 0, image.width, image.height);
+
+            this.constraints.rows = image.height;
+            this.constraints.cols = image.width;
+            this.reset();
+
+            for (let n = 0; n < imageData.data.length; n += 4) {
+                const data = imageData.data;
+                const color = data[n] << 16 | data[n + 1] << 12 | data[n + 2] << 8 | data[n + 3];
+                this.state[n / 4 | 0] = color === this.constraints.livingColor ? 1 : 0;
+            }
+        };
+        image.src = url;
+    }
 }
 /* tslint:enable:no-bitwise */

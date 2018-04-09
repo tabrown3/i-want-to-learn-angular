@@ -16,7 +16,6 @@ import { fromEvent } from 'rxjs/observable/fromEvent';
     templateUrl: './WebGlRendererTemplate.html'
 })
 export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
-    
     isInitialized = false;
     program: WebGLProgram;
     uniformLocations: Stratton.GameOfLife.IWebGlUniformLocations;
@@ -31,7 +30,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
     constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {   }
 
-    get gl() : WebGLRenderingContext {
+    get gl(): WebGLRenderingContext {
         return this.canvas.context;
     }
 
@@ -54,15 +53,15 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
             shaderSources
                 .map(x => this.loadShader(x.shaderType === 'vertex' ? this.gl.VERTEX_SHADER : this.gl.FRAGMENT_SHADER, x.source))
                 .forEach(x => this.gl.attachShader(this.program, x));
-            
+
             this.gl.linkProgram(this.program);
             this.initAttributes();
-            
+
             zip(...this.objects.toArray())
             .subscribe((webGlObjects) => {
-                this.cube = webGlObjects.find(x => x.name === "cube");                
+                this.cube = webGlObjects.find(x => x.name === 'cube');
                 this.isInitialized = true;
-            });            
+            });
         });
     }
 
@@ -72,59 +71,63 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
         fromEvent(this.globalReference.document, 'keydown')
         .subscribe((event: KeyboardEvent) => {
-            switch (event.key) {                
+            switch (event.key) {
                 case 'w':
                 case 's':
                     vec3.add(this.camera.position, this.camera.position, [
-                        (event.key === 'w' ? 1 : -1)*this.camera.rotation[2],
-                        (event.key === 'w' ? 1 : -1)*this.camera.rotation[6],
-                        (event.key === 'w' ? 1 : -1)*this.camera.rotation[10]
-                    ]);                    
+                        (event.key === 'w' ? -1 : 1) * this.camera.rotation[8],
+                        (event.key === 'w' ? -1 : 1) * this.camera.rotation[9],
+                        (event.key === 'w' ? -1 : 1) * this.camera.rotation[10]
+                    ]);
                     break;
                 case 'a':
                 case 'd':
                 vec3.add(this.camera.position, this.camera.position, [
-                    (event.key === 'a' ? 1 : -1)*this.camera.rotation[0],
-                    (event.key === 'a' ? 1 : -1)*this.camera.rotation[4],
-                    (event.key === 'a' ? 1 : -1)*this.camera.rotation[8]
-                ]); 
+                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[0],
+                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[1],
+                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[2]
+                ]);
+                break;
+                case 'Shift':
+                case 'Control':
+                vec3.add(this.camera.position, this.camera.position, [
+                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[4],
+                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[5],
+                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[6]
+                ]);
                 break;
                 default: break;
             }
         });
 
 
-        fromEvent(this.canvas.context.canvas, 'click',)
+        fromEvent(this.canvas.context.canvas, 'click')
         .subscribe((event: MouseEvent) => {
             this.canvas.context.canvas.requestPointerLock();
         });
 
-        fromEvent(this.globalReference.document, 'pointerlockchange')
-        .subscribe(()=> {
-            if (this.globalReference.document.pointerLockElement === this.canvas.context.canvas) {   
-                mouseMoveUnsubscribe = fromEvent(this.globalReference.document, 'mousemove')
-                .subscribe((event: MouseEvent)=>{
 
-                  
-                   //mat4.rotateY(
-                   //    this.camera.modelViewMatrix, 
-                   //    this.camera.modelViewMatrix,(event.movementX / this.canvas.context.canvas.width)  * this.camera.fieldOfView );
+        fromEvent(this.globalReference.document, 'pointerlockchange')
+        .subscribe(() => {
+            if (this.globalReference.document.pointerLockElement === this.canvas.context.canvas) {
+                mouseMoveUnsubscribe = fromEvent(this.globalReference.document, 'mousemove')
+                .subscribe((event: MouseEvent) => {
+
 
                     mat4.rotate(this.camera.rotation, this.camera.rotation,
-                    (event.movementX / this.canvas.context.canvas.width)  * this.camera.fieldOfView,
+                        (-event.movementY / this.canvas.context.canvas.height)  * this.camera.fieldOfView,
+                        [
+                            1, // this.camera.rotation[0],
+                            0, // this.camera.rotation[4],
+                            0, //  this.camera.rotation[8]
+                        ]);
+
+                    mat4.rotate(this.camera.rotation, this.camera.rotation,
+                    (-event.movementX / this.canvas.context.canvas.width)  * this.camera.fieldOfView,
                     [
                         0,
                         1,
                         0
-                    ]);
-
-
-                   mat4.rotate(this.camera.rotation, this.camera.rotation,
-                    (event.movementY / this.canvas.context.canvas.height)  * this.camera.fieldOfView,
-                    [
-                        this.camera.rotation[0],
-                        this.camera.rotation[4],
-                        this.camera.rotation[8]
                     ]);
                 });
             } else {
@@ -148,22 +151,18 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
 
-        const cameraModelViewMatrix = mat4.create();        
-       // const invertPos = vec3.create();        
-       // vec3.scale(invertPos, this.camera.position, -1);
-        //mat4.translate(cameraModelViewMatrix, cameraModelViewMatrix, invertPos)
-        mat4.translate(cameraModelViewMatrix, cameraModelViewMatrix, this.camera.position);
-       // const invertRot = mat4.create();
-       // mat4.invert(invertRot, this.camera.rotation);
-       // mat4.multiply(cameraModelViewMatrix, cameraModelViewMatrix, invertRot);        
-       mat4.multiply(cameraModelViewMatrix, cameraModelViewMatrix, this.camera.rotation);        
-        
+        // const viewMatrix = mat4.clone(this.camera.rotation);
+        // mat4.translate(viewMatrix, viewMatrix, this.camera.position);
+        // mat4.invert(viewMatrix, viewMatrix);
 
-//do stuff
+        const viewMatrix = mat4.create();
+        mat4.translate(viewMatrix, viewMatrix, this.camera.position);
+        mat4.multiply(viewMatrix, viewMatrix, this.camera.rotation);
+        mat4.invert(viewMatrix, viewMatrix);
 
+        // no skewing or scaling, so normals are mostly fine
         const normalMatrix = mat4.create();
-        mat4.invert(normalMatrix, cameraModelViewMatrix);
-        mat4.transpose(normalMatrix, normalMatrix);
+        // mat4.transpose(normalMatrix, viewMatrix);
 
         // Tell WebGL to use our program when drawing
         this.gl.useProgram(this.program);
@@ -190,7 +189,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
                     const x = (i % constraints.cols) - constraints.cols / 2;
                     const y = -((i / constraints.cols | 0) - constraints.rows / 2);
 
-                    mat4.translate(currentModelView, cameraModelViewMatrix, [x, y, 0.0]);
+                    mat4.translate(currentModelView, viewMatrix, [x, y, 0.0]);
                     this.gl.uniformMatrix4fv(
                         this.uniformLocations.modelViewMatrix,
                         false,
@@ -216,7 +215,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     private initAttributes() {
-        
+
         this.attributes = {
             vertexPosition : this.gl.getAttribLocation(this.program, 'aVertexPosition'),
             vertexColor : this.gl.getAttribLocation(this.program, 'aVertexColor'),
