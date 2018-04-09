@@ -1,27 +1,16 @@
 /* tslint:disable:directive-selector */
-
-import { Directive, ElementRef, ViewChild, Inject, Input } from '@angular/core';
+import { Directive, ElementRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 
 @Directive({
-  selector: '[globalMath]',
-  exportAs: 'Math'
-})
-export class MathDirective {
-  constructor(){
-    return Math;
-  }
-}
-
-@Directive({
     selector: 'webgl-object'
 })
 export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlObject> {
 
-    constructor(private element: ElementRef, private http: HttpClient) {        
+    constructor(private element: ElementRef, private http: HttpClient) {
       super(observer => {
         const url = element.nativeElement.getAttribute('src');
         const name = element.nativeElement.getAttribute('name');
@@ -33,7 +22,7 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
               this.load();
               observer.next({
                 name : name,
-                bind : (attributes: Stratton.GameOfLife.IWebGlAttributes)=> this.bind(attributes),
+                bind : (attributes: Stratton.GameOfLife.IWebGlAttributes) => this.bind(attributes),
                 draw: () => this.draw()
               });
             }, console.log);
@@ -46,62 +35,66 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
     @Input() context: WebGLRenderingContext;
 
     private bind(attributes: Stratton.GameOfLife.IWebGlAttributes): void {
-      this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.position);
-      this.context.vertexAttribPointer(attributes.vertexPosition, 3, this.context.FLOAT, false, 0, 0);
-      this.context.enableVertexAttribArray(attributes.vertexPosition);
-    
-      //this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.color);
-      //this.context.vertexAttribPointer(this.vertexColor, 4, this.context.FLOAT, false, 0, 0);
-      //this.context.enableVertexAttribArray(this.vertexColor);
+      const gl = this.context;
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
+      gl.vertexAttribPointer(attributes.vertexPosition, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(attributes.vertexPosition);
 
-      this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.normal);
-      this.context.vertexAttribPointer(attributes.vertexNormal, 3, this.context.FLOAT, false, 0, 0);
-      this.context.enableVertexAttribArray(attributes.vertexNormal);      
+      // this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.color);
+      // this.context.vertexAttribPointer(this.vertexColor, 4, this.context.FLOAT, false, 0, 0);
+      // this.context.enableVertexAttribArray(this.vertexColor);
 
-      this.context.bindBuffer(this.context.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
+      gl.vertexAttribPointer(attributes.vertexNormal, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(attributes.vertexNormal);
+
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
     }
 
     private draw(): void {
-      this.context.drawElements(this.context.TRIANGLES, this.mesh.faceCount * 3, this.context.UNSIGNED_SHORT, 0);
+      const gl = this.context;
+      gl.drawElements(gl.TRIANGLES, this.mesh.faceCount * 3, gl.UNSIGNED_SHORT, 0);
     }
-    
+
     private load() {
+      const gl = this.context;
+
       if (this.buffers) {
-        this.context.deleteBuffer(this.buffers.position);
-        this.context.deleteBuffer(this.buffers.color);
-        this.context.deleteBuffer(this.buffers.normal);
-        this.context.deleteBuffer(this.buffers.indices);
+        gl.deleteBuffer(this.buffers.position);
+        gl.deleteBuffer(this.buffers.color);
+        gl.deleteBuffer(this.buffers.normal);
+        gl.deleteBuffer(this.buffers.indices);
         this.buffers = null;
       }
 
       this.buffers = {
         position : this.context.createBuffer(),
-        color : null,//this.context.createBuffer(),
+        color : null, // this.context.createBuffer(),
         normal : this.context.createBuffer(),
-        indices : this.context.createBuffer()      
+        indices : this.context.createBuffer()
       };
 
-      this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.position);
-      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), this.context.STATIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
 
-      this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.normal);
-      this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.normals), this.context.STATIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.normals), gl.STATIC_DRAW);
 
-      this.context.bindBuffer(this.context.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-      this.context.bufferData(this.context.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.mesh.indices), this.context.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.mesh.indices), gl.STATIC_DRAW);
 
-      //this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.color);
-      //this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.), this.context.STATIC_DRAW);
+      // this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffers.color);
+      // this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(this.mesh.), this.context.STATIC_DRAW);
 
     }
 
     private parse(str): Stratton.GameOfLife.IWebGlMesh {
         const lines = str.trim().split('\n');
-        
+
         let name: string = null;
         const tempNormals = [];
         const tempVectors = [];
-        const faces: {v:number, n: number}[][] = [];
+        const faces: {v: number, n: number}[][] = [];
 
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
@@ -132,8 +125,8 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
               tempNormals.push(...values.map(Number));
               break;
             case 'f':
-                faces.push(values.map(indices => {
-                  const p = indices.split('/').map(index => index === '' ? NaN : Number(index)-1);
+                faces.push(values.map(data => {
+                  const p = data.split('/').map(index => index === '' ? NaN : Number(index) - 1);
                   return { v: p[0], n: p[2] };
                 }));
               break;
@@ -147,25 +140,25 @@ export class WebGlObjectDirective extends Observable<Stratton.GameOfLife.IWebGlO
         const indices = [];
         const lookup = new Array(tempNormals.length * tempVectors.length / 9).fill(NaN);
         let nextIndex = 0;
-        faces.forEach(face=> {
+        faces.forEach(face => {
           face.forEach(point => {
             if (isNaN(lookup[point.v * tempNormals.length / 3 + point.n ])) {
               lookup[point.v * tempNormals.length / 3 + point.n ] = nextIndex;
               indices.push(nextIndex);
-              vertices.push(...tempVectors.slice(point.v * 3, point.v * 3 +3));
-              normals.push(...tempNormals.slice(point.n * 3, point.n * 3 +3));
+              vertices.push(...tempVectors.slice(point.v * 3, point.v * 3 + 3));
+              normals.push(...tempNormals.slice(point.n * 3, point.n * 3 + 3));
               nextIndex++;
             } else {
               indices.push(lookup[point.v * tempNormals.length / 3 + point.n ]);
             }
-          })
+          });
         });
 
         return {
-          name: name,   
+          name: name,
           vertices: vertices,
-          normals: normals, 
-          indices: indices,       
+          normals: normals,
+          indices: indices,
           textUVs: null,
           faceCount: faces.length
         };

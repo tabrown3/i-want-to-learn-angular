@@ -1,6 +1,5 @@
 
 /* tslint:disable:directive-selector */
-
 import { Directive, Input, OnInit } from '@angular/core';
 import { mat4, vec3 } from 'gl-matrix';
 
@@ -17,7 +16,6 @@ export class WebGlCameraDirective implements OnInit {
     @Input() initRotation: number[];
 
     readonly projectionMatrix = mat4.create();
-
     readonly rotation = mat4.create();
     readonly position = vec3.create();
 
@@ -26,7 +24,7 @@ export class WebGlCameraDirective implements OnInit {
             this.fieldOfView,
             this.aspect,
             this.zNear,
-            this.zFar);        
+            this.zFar);
         mat4.set(this.rotation, ...this.initRotation);
         vec3.set(this.position, ...this.initPosition);
     }

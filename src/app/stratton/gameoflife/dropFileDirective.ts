@@ -1,40 +1,46 @@
 /* tslint:disable:directive-selector */
-import { Directive, ElementRef, EventEmitter, Output } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-
+import { Directive, ElementRef, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { fromEvent } from 'rxjs/observable/fromEvent';
+import { Subscription } from 'rxjs/Subscription';
 
 @Directive({
     selector: '[dropFile]'
 })
-export class DropFileDirective {
+export class DropFileDirective implements OnDestroy {
 
     @Output() fileDrop: EventEmitter<File> = new EventEmitter<File>();
 
+    subscriptions: Subscription[];
+
     constructor(element: ElementRef) {
-        fromEvent(element.nativeElement, 'drop')
-        .subscribe((evt: DragEvent) => {
-            evt.preventDefault();
-
-            if (evt.dataTransfer.items) {
-                for (let i = 0; i < evt.dataTransfer.items.length; i++) {
-                    const item = evt.dataTransfer.items[i];
-                    if (item.kind !== 'file') {
-                        continue;
-                    }
-                    const file = item.getAsFile();
-                    this.fileDrop.emit(file);
-                }
-                evt.dataTransfer.items.clear();
-            } else {
-                evt.dataTransfer.clearData();
-            }
-        });
-
-        fromEvent(element.nativeElement, 'dragover')
-        .subscribe((evt: Event) => {
-            evt.preventDefault();
-        });
+        const elm = element.nativeElement;
+        this.subscriptions = [
+            fromEvent(elm, 'drop').subscribe(this.fileDropped),
+            fromEvent(elm, 'dragover').subscribe(this.cancelEvent)
+        ];
     }
 
+    fileDropped = (evt: DragEvent) => {
+        this.cancelEvent(evt);
+
+        if (evt.dataTransfer.items) {
+            for (let i = 0; i < evt.dataTransfer.items.length; i++) {
+                const item = evt.dataTransfer.items[i];
+                if (item.kind !== 'file') {
+                    continue;
+                }
+                const file = item.getAsFile();
+                this.fileDrop.emit(file);
+            }
+            evt.dataTransfer.items.clear();
+        } else {
+            evt.dataTransfer.clearData();
+        }
+    }
+
+    cancelEvent = (evt: DragEvent) => evt.preventDefault();
+
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
 }

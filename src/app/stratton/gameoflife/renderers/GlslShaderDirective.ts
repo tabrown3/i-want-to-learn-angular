@@ -1,6 +1,5 @@
-
 /* tslint:disable:directive-selector */
-import { Directive, ElementRef, ViewChild, Inject, Input } from '@angular/core';
+import { Directive, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';

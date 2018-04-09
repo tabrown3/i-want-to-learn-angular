@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
 
 import { InjectToken} from '../gameOfLife.injection';
 

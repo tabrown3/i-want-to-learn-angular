@@ -1,5 +1,4 @@
 /* tslint:disable:no-bitwise */
-
 import { Injectable, Inject } from '@angular/core';
 import { InjectToken} from './gameOfLife.injection';
 
@@ -8,8 +7,7 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
 
     readonly constraints: Stratton.GameOfLife.IConstraints;
     renderer: Stratton.GameOfLife.IRenderer;
-    statebuffer0: Int8Array;
-    statebuffer1: Int8Array;
+    statebuffer: Int8Array[];
     bufferInUse = 0;
 
     readonly neighbours: Stratton.GameOfLife.IPoint[] = [
@@ -33,19 +31,19 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
     }
 
     reset(): void {
-        this.statebuffer0 = new Int8Array(this.dataSize);
-        this.statebuffer1 = new Int8Array(this.dataSize);
+        this.statebuffer = [new Int8Array(this.dataSize), new Int8Array(this.dataSize)];
     }
 
     tick(): void {
-        const source = this.state;
-        const destination = source === this.statebuffer0 ? this.statebuffer1 : this.statebuffer0;
+        const nextBuffer = (this.bufferInUse + 1) % 2;
+        const source = this.statebuffer[this.bufferInUse];
+        const destination = this.statebuffer[nextBuffer];
 
         for (let index = 0; index < this.dataSize; index++) {
             destination[index] = this.willCellBeAlive(source, index) ? 1 : 0;
         }
 
-        this.bufferInUse = (this.bufferInUse + 1) % 2;
+        this.bufferInUse = nextBuffer;
     }
 
     randomize(): void {
@@ -91,7 +89,7 @@ export class BoardService implements Stratton.GameOfLife.IBoardService {
     }
 
     get state(): Int8Array {
-        return this.bufferInUse ? this.statebuffer1 : this.statebuffer0;
+        return this.statebuffer[this.bufferInUse];
     }
 
     render(): void {

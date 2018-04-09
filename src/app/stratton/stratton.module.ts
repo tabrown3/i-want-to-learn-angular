@@ -15,9 +15,10 @@ import { CanvasRendererComponent } from './gameoflife/renderers/CanvasRendererCo
 import { TextRendererComponent } from './gameoflife/renderers/TextRendererComponent';
 import { WebGlRendererComponent } from './gameoflife/renderers/WebGlRendererComponent';
 import { GlslShaderDirective } from './gameoflife/renderers/GlslShaderDirective';
-import { WebGlCanvasDirective } from './gameoflife/renderers/WebGlCanvasDirective'
-import { WebGlObjectDirective, MathDirective } from './gameoflife/renderers/WebGlObjectDirective';
+import { WebGlCanvasDirective } from './gameoflife/renderers/WebGlCanvasDirective';
+import { WebGlObjectDirective } from './gameoflife/renderers/WebGlObjectDirective';
 import { WebGlCameraDirective } from './gameoflife/renderers/WebGlCameraDirective';
+import { MathDirective } from './gameoflife/mathDirective';
 
 import { DropFileDirective } from './gameoflife/dropFileDirective';
 

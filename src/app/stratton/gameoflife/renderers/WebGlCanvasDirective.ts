@@ -1,3 +1,4 @@
+/* tslint:disable:directive-selector */
 import { Directive, ElementRef } from '@angular/core';
 
 @Directive({
@@ -8,7 +9,7 @@ export class WebGlCanvasDirective  {
 
     context:  WebGLRenderingContext;
 
-    constructor( element : ElementRef) {
+    constructor(element: ElementRef) {
         this.context = element.nativeElement.getContext('webgl');
     }
 }

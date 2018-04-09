@@ -7,7 +7,8 @@ import { WebGlCameraDirective } from './WebGlCameraDirective';
 import { Observable } from 'rxjs/Observable';
 import { zip } from 'rxjs/observable/zip';
 import { WebGlCanvasDirective } from './WebGlCanvasDirective';
-import { WebGlObjectDirective, MathDirective } from './WebGlObjectDirective';
+import { WebGlObjectDirective } from './WebGlObjectDirective';
+import { MathDirective } from '../mathDirective';
 import { map } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 
@@ -66,7 +67,6 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     private setUpEvents() {
-
         let mouseMoveUnsubscribe: any;
 
         fromEvent(this.globalReference.document, 'keydown')
@@ -82,19 +82,19 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
                     break;
                 case 'a':
                 case 'd':
-                vec3.add(this.camera.position, this.camera.position, [
-                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[0],
-                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[1],
-                    (event.key === 'a' ? -1 : 1) * this.camera.rotation[2]
-                ]);
+                    vec3.add(this.camera.position, this.camera.position, [
+                        (event.key === 'a' ? -1 : 1) * this.camera.rotation[0],
+                        (event.key === 'a' ? -1 : 1) * this.camera.rotation[1],
+                        (event.key === 'a' ? -1 : 1) * this.camera.rotation[2]
+                    ]);
                 break;
                 case 'Shift':
                 case 'Control':
-                vec3.add(this.camera.position, this.camera.position, [
-                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[4],
-                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[5],
-                    (event.key === 'Control' ? -1 : 1) * this.camera.rotation[6]
-                ]);
+                    vec3.add(this.camera.position, this.camera.position, [
+                        (event.key === 'Control' ? -1 : 1) * this.camera.rotation[4],
+                        (event.key === 'Control' ? -1 : 1) * this.camera.rotation[5],
+                        (event.key === 'Control' ? -1 : 1) * this.camera.rotation[6]
+                    ]);
                 break;
                 default: break;
             }
@@ -147,14 +147,12 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         this.gl.depthFunc(this.gl.LEQUAL);            // Near things obscure far things
 
         // Clear the canvas before we start drawing on it.
-
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
 
         // const viewMatrix = mat4.clone(this.camera.rotation);
         // mat4.translate(viewMatrix, viewMatrix, this.camera.position);
         // mat4.invert(viewMatrix, viewMatrix);
-
         const viewMatrix = mat4.create();
         mat4.translate(viewMatrix, viewMatrix, this.camera.position);
         mat4.multiply(viewMatrix, viewMatrix, this.camera.rotation);
@@ -164,10 +162,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         const normalMatrix = mat4.create();
         // mat4.transpose(normalMatrix, viewMatrix);
 
-        // Tell WebGL to use our program when drawing
         this.gl.useProgram(this.program);
-
-        // Set the shader uniforms
         this.gl.uniformMatrix4fv(
             this.uniformLocations.projectionMatrix,
             false,
@@ -176,31 +171,27 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         //     this.uniformLocations.modelViewMatrix,
         //     false,
         //     this.camera.modelViewMatrix);
-
         this.gl.uniformMatrix4fv(
             this.uniformLocations.normalMatrix,
             false,
             normalMatrix);
 
-        {
-            const currentModelView = mat4.create();
-            for (let i = 0; i < state.length; i++) {
-                if (state[i]) {
-                    const x = (i % constraints.cols) - constraints.cols / 2;
-                    const y = -((i / constraints.cols | 0) - constraints.rows / 2);
+        const currentModelView = mat4.create();
+        for (let i = 0; i < state.length; i++) {
+            if (state[i]) {
+                const x = (i % constraints.cols) - constraints.cols / 2;
+                const y = -((i / constraints.cols | 0) - constraints.rows / 2);
 
-                    mat4.translate(currentModelView, viewMatrix, [x, y, 0.0]);
-                    this.gl.uniformMatrix4fv(
-                        this.uniformLocations.modelViewMatrix,
-                        false,
-                        currentModelView);
-                    this.cube.bind(this.attributes);
-                    this.cube.draw();
-                }
+                mat4.translate(currentModelView, viewMatrix, [x, y, 0.0]);
+                this.gl.uniformMatrix4fv(
+                    this.uniformLocations.modelViewMatrix,
+                    false,
+                    currentModelView);
+                this.cube.bind(this.attributes);
+                this.cube.draw();
             }
         }
     }
-
 
     private loadShader(type, source): WebGLShader {
         const shader = this.gl.createShader(type);
@@ -215,7 +206,6 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
     }
 
     private initAttributes() {
-
         this.attributes = {
             vertexPosition : this.gl.getAttribLocation(this.program, 'aVertexPosition'),
             vertexColor : this.gl.getAttribLocation(this.program, 'aVertexColor'),
