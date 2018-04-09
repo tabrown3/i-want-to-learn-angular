@@ -12,17 +12,17 @@ export class DropFileDirective implements OnDestroy {
 
     subscriptions: Subscription[];
 
-    constructor(element: ElementRef) {
+    constructor(private element: ElementRef) {
         const elm = element.nativeElement;
         this.subscriptions = [
             fromEvent(elm, 'drop').subscribe(this.fileDropped),
-            fromEvent(elm, 'dragover').subscribe(this.cancelEvent)
+            fromEvent(elm, 'dragover').subscribe(this.hovering)
         ];
     }
 
     fileDropped = (evt: DragEvent) => {
-        this.cancelEvent(evt);
-
+        evt.preventDefault();
+        this.element.nativeElement.style.outline = '0px';
         if (evt.dataTransfer.items) {
             for (let i = 0; i < evt.dataTransfer.items.length; i++) {
                 const item = evt.dataTransfer.items[i];
@@ -38,7 +38,10 @@ export class DropFileDirective implements OnDestroy {
         }
     }
 
-    cancelEvent = (evt: DragEvent) => evt.preventDefault();
+    hovering = (evt: DragEvent) => {
+        evt.preventDefault();
+        this.element.nativeElement.style.outline = '1px solid red';
+    }
 
     ngOnDestroy(): void {
         this.subscriptions.forEach(subscription => subscription.unsubscribe());

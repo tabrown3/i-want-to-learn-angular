@@ -9,7 +9,8 @@ import { InjectToken} from './gameOfLife.injection';
 
 @Component({
     selector: 'app-game-of-life',
-    templateUrl: './gameOfLifeTemplate.html'
+    templateUrl: './gameOfLifeTemplate.html',
+    styles: [':host { background-color: #000000']
 })
 export class GameOfLifeComponent implements OnDestroy {
 

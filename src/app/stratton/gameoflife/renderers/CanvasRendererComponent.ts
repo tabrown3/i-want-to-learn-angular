@@ -4,7 +4,8 @@ import { InjectToken } from '../gameOfLife.injection';
 
 @Component({
     selector: 'app-gameoflife-canvasrenderer',
-    template: `<canvas #canvas></canvas>`
+    template: `<canvas #canvas></canvas>`,
+    styles: [':host > canvas { margin: 0px auto;}']
 })
 export class CanvasRendererComponent implements AfterViewInit, Stratton.GameOfLife.IRenderer {
 

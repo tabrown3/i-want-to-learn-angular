@@ -48,6 +48,7 @@ export class TextRendererComponent implements Stratton.GameOfLife.IRenderer {
 
         divStyle.width = (constraints.cols * constraints.cellSizeInPixels) + 'px';
         divStyle.height = (constraints.rows * constraints.cellSizeInPixels) + 'px';
+        divStyle.margin = '0px auto';
         divStyle.overflowX = 'hidden';
         divStyle.overflowY = 'hidden';
         divStyle.backgroundColor = this.intToColor(constraints.deathColor);
