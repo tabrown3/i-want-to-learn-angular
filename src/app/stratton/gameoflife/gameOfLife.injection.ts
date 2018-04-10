@@ -5,7 +5,7 @@ export function _<T>(name): InjectionToken<T> {
 }
 
 export const InjectToken = {
-    IGameOfLifeService: _<Stratton.IGameOfLifeService>('IGameOfLifeService'),
+    IBoardService: _<Stratton.GameOfLife.IBoardService>('IBoardService'),
     IGlobalReference: _<Stratton.IGlobalReference>('IGlobalReference')
 };
 

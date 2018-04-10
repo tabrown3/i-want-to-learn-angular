@@ -1,4 +1,4 @@
-<app-gameoflife-renderselector></app-gameoflife-renderselector>
+<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Conway's Game of Life</a>
 
 <fieldset>
     <label>Renderer</label>
@@ -8,28 +8,19 @@
         <option value="webgl">WebGl</option>
     </select>
 
-    <br />
-
     <label>Rows</label>
     <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.rows" (change)="resetGame()" />
 
     <label>Columns</label>
     <input [disabled]="isRunning" type="number" min="8" max="128" [(ngModel)]="constraintModel.cols" (change)="resetGame()" />
-    <br />
+    
     <label>Surface is a torus</label>
     <input [disabled]="isRunning" type="checkbox" [(ngModel)]="constraintModel.isTorus" (change)="resetGame()" />
 
     <label>Frame Delay (ms):</label>
     <input type="number" min="0" max="1000" [(ngModel)]="constraintModel.frameDelay" />
 
-    <br />
-    <button (click)="randomize()" [disabled]="isRunning">Randomize</button>
-    <button (click)="startGame()" [disabled]="isRunning">Start</button>
-    <button (click)="stopGame()" [disabled]="!isRunning">Stop</button>
+    <button (click)="randomize()" [disabled]="isRunning">?</button>
+    <button (click)="isRunning ? stopGame() : startGame()">{{isRunning ? '||' : '>'}}</button>
 </fieldset>
-
-
-
-
-<p>
-<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Conway's Game of Life</a>
+<app-gameoflife-renderselector dropFile (fileDrop)="loadFile($event)" title="Drag and drop BMP files to load state!"></app-gameoflife-renderselector>

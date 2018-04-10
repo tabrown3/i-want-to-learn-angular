@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TextRendererComponent } from '../renderers/TextRendererComponent';
@@ -21,16 +21,17 @@ export enum GameOfLifeRendererEnum {
     <app-gameoflife-textrenderer *ngIf="isSelected('text')"></app-gameoflife-textrenderer>
     <app-gameoflife-canvasrenderer *ngIf="isSelected('canvas')"></app-gameoflife-canvasrenderer>
     <app-gameoflife-webglrenderer *ngIf="isSelected('webgl')"></app-gameoflife-webglrenderer>
-    `
+    `,
+    styles: [':host{ display: block; width: 100%;}']
 })
-export class RendererSelectorComponent extends Observable<Stratton.IGameOfLifeRenderer> {
+export class RendererSelectorComponent extends Observable<Stratton.GameOfLife.IRenderer> {
 
     private selectedRenderer: GameOfLifeRendererEnum = GameOfLifeRendererEnum.text;
-    private subscriber: Subscriber<Stratton.IGameOfLifeRenderer>;
+    private subscriber: Subscriber<Stratton.GameOfLife.IRenderer>;
 
     constructor() {
         super(observer => {
-            this.subscriber = new Subscriber<Stratton.IGameOfLifeRenderer>((val) => {
+            this.subscriber = new Subscriber<Stratton.GameOfLife.IRenderer>((val) => {
                 observer.next(val);
             });
         });

@@ -1,23 +1,22 @@
 /* tslint:disable:no-bitwise */
-
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { InjectToken} from './gameOfLife.injection';
 
 @Injectable()
-export class GameOfLifeService implements Stratton.IGameOfLifeService {
+export class BoardService implements Stratton.GameOfLife.IBoardService {
 
-    readonly constraints: Stratton.IGameOfLifeConstraints;
-    renderer: Stratton.IGameOfLifeRenderer;
-    statebuffer0: Int8Array;
-    statebuffer1: Int8Array;
+    readonly constraints: Stratton.GameOfLife.IConstraints;
+    renderer: Stratton.GameOfLife.IRenderer;
+    statebuffer: Int8Array[];
     bufferInUse = 0;
 
-    readonly neighbours: Stratton.IPoint[] = [
+    readonly neighbours: Stratton.GameOfLife.IPoint[] = [
         {x: -1, y: -1}, {x:  0, y: -1}, {x:  1, y: -1},
         {x: -1, y:  0},               , {x:  1, y:  0},
         {x: -1, y:  1}, {x:  0, y:  1}, {x:  1, y:  1}
     ];
 
-    constructor() {
+    constructor(@Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference) {
         this.constraints = {
             rows: 64,
             cols: 64,
@@ -25,26 +24,26 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
             isTorus: true,
             livingColor: 0xFFFFFF,
             deathColor: 0x000000,
-            frameDelay: 100
+            frameDelay: 50
         };
 
         this.reset();
     }
 
     reset(): void {
-        this.statebuffer0 = new Int8Array(this.dataSize);
-        this.statebuffer1 = new Int8Array(this.dataSize);
+        this.statebuffer = [new Int8Array(this.dataSize), new Int8Array(this.dataSize)];
     }
 
     tick(): void {
-        const source = this.state;
-        const destination = source === this.statebuffer0 ? this.statebuffer1 : this.statebuffer0;
+        const nextBuffer = (this.bufferInUse + 1) % 2;
+        const source = this.statebuffer[this.bufferInUse];
+        const destination = this.statebuffer[nextBuffer];
 
         for (let index = 0; index < this.dataSize; index++) {
             destination[index] = this.willCellBeAlive(source, index) ? 1 : 0;
         }
 
-        this.bufferInUse = (this.bufferInUse + 1) % 2;
+        this.bufferInUse = nextBuffer;
     }
 
     randomize(): void {
@@ -90,7 +89,7 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
     }
 
     get state(): Int8Array {
-        return this.bufferInUse ? this.statebuffer1 : this.statebuffer0;
+        return this.statebuffer[this.bufferInUse];
     }
 
     render(): void {
@@ -99,5 +98,32 @@ export class GameOfLifeService implements Stratton.IGameOfLifeService {
         }
     }
 
+    loadFromFile(file: File) {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+
+        image.onload = () => {
+            URL.revokeObjectURL(url);
+            const context = this.globalReference.document.createElement('canvas').getContext('2d');
+            context.canvas.width = image.width;
+            context.canvas.height = image.height;
+            context.mozImageSmoothingEnabled = false;
+            context.webkitImageSmoothingEnabled = false;
+            context.imageSmoothingEnabled = false;
+            context.drawImage(image, 0, 0);
+            const imageData = context.getImageData(0, 0, image.width, image.height);
+
+            this.constraints.rows = image.height;
+            this.constraints.cols = image.width;
+            this.reset();
+
+            for (let n = 0; n < imageData.data.length; n += 4) {
+                const data = imageData.data;
+                const color = data[n] << 16 | data[n + 1] << 12 | data[n + 2] << 8 | data[n + 3];
+                this.state[n / 4 | 0] = color === this.constraints.livingColor ? 1 : 0;
+            }
+        };
+        image.src = url;
+    }
 }
 /* tslint:enable:no-bitwise */

@@ -1,14 +1,13 @@
 /* tslint:disable:no-bitwise */
-
 import { Component, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
-
-import { InjectToken } from '../../stratton.injection';
+import { InjectToken } from '../gameOfLife.injection';
 
 @Component({
     selector: 'app-gameoflife-canvasrenderer',
-    template: `<canvas #canvas></canvas>`
+    template: `<canvas #canvas></canvas>`,
+    styles: [':host > canvas { margin: 0px auto;}']
 })
-export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfLifeRenderer {
+export class CanvasRendererComponent implements AfterViewInit, Stratton.GameOfLife.IRenderer {
 
     context: CanvasRenderingContext2D;
     scratchContext: CanvasRenderingContext2D;
@@ -22,36 +21,35 @@ export class CanvasRendererComponent implements AfterViewInit, Stratton.IGameOfL
         this.scratchContext = this.globalReference.document.createElement('canvas').getContext('2d');
     }
 
-    initialize(constraints: Stratton.IGameOfLifeConstraints) {
+    initialize(constraints: Stratton.GameOfLife.IConstraints) {
         this.scratchContext.canvas.width = constraints.cols;
         this.scratchContext.canvas.height = constraints.rows;
-
         this.imageData = this.scratchContext.createImageData(constraints.cols, constraints.rows);
     }
 
-    render(state: Int8Array, constraints: Stratton.IGameOfLifeConstraints) {
+    render(state: Int8Array, constraints: Stratton.GameOfLife.IConstraints) {
         const scale = constraints.cellSizeInPixels;
-
-        this.context.canvas.width = constraints.cols * scale;
-        this.context.canvas.height = constraints.rows * scale;
-
+        const ctx = this.context;
+        ctx.canvas.width = constraints.cols * scale;
+        ctx.canvas.height = constraints.rows * scale;
+        const data = this.imageData.data;
         for (let index = 0; index < state.length; index++) {
             const imageIndex = index * 4;
             const pointState: number = state[index] ? constraints.livingColor : constraints.deathColor;
-            this.imageData.data[imageIndex + 0] = pointState & 0xFF0000;
-            this.imageData.data[imageIndex + 1] = pointState & 0x00FF00;
-            this.imageData.data[imageIndex + 2] = pointState & 0x0000FF;
-            this.imageData.data[imageIndex + 3] = 255;
+            data[imageIndex + 0] = pointState & 0xFF0000;
+            data[imageIndex + 1] = pointState & 0x00FF00;
+            data[imageIndex + 2] = pointState & 0x0000FF;
+            data[imageIndex + 3] = 255;
         }
 
         this.scratchContext.putImageData(this.imageData, 0, 0);
-        this.context.save();
-        this.context.scale(scale, scale);
-        this.context.mozImageSmoothingEnabled = false;
-        this.context.webkitImageSmoothingEnabled = false;
-        this.context.imageSmoothingEnabled = false;
-        this.context.drawImage(this.scratchContext.canvas, 0, 0);
-        this.context.restore();
+        ctx.save();
+        ctx.scale(scale, scale);
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(this.scratchContext.canvas, 0, 0);
+        ctx.restore();
     }
 }
 /* tslint:enable:no-bitwise */
