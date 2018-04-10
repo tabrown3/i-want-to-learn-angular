@@ -21,7 +21,8 @@ export enum GameOfLifeRendererEnum {
     <app-gameoflife-textrenderer *ngIf="isSelected('text')"></app-gameoflife-textrenderer>
     <app-gameoflife-canvasrenderer *ngIf="isSelected('canvas')"></app-gameoflife-canvasrenderer>
     <app-gameoflife-webglrenderer *ngIf="isSelected('webgl')"></app-gameoflife-webglrenderer>
-    `
+    `,
+    styles: [':host{ display: block; width: 100%;}']
 })
 export class RendererSelectorComponent extends Observable<Stratton.GameOfLife.IRenderer> {
 

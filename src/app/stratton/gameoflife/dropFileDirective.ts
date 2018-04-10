@@ -16,13 +16,18 @@ export class DropFileDirective implements OnDestroy {
         const elm = element.nativeElement;
         this.subscriptions = [
             fromEvent(elm, 'drop').subscribe(this.fileDropped),
-            fromEvent(elm, 'dragover').subscribe(this.hovering)
+            fromEvent(elm, 'dragover').subscribe(this.hovering),
+            fromEvent(elm, 'dragenter').subscribe(this.entering)
         ];
     }
 
     fileDropped = (evt: DragEvent) => {
         evt.preventDefault();
+        evt.stopPropagation();
         this.element.nativeElement.style.outline = '0px';
+        if (!evt.dataTransfer) {
+            return;
+        }
         if (evt.dataTransfer.items) {
             for (let i = 0; i < evt.dataTransfer.items.length; i++) {
                 const item = evt.dataTransfer.items[i];
@@ -31,8 +36,10 @@ export class DropFileDirective implements OnDestroy {
                 }
                 const file = item.getAsFile();
                 this.fileDrop.emit(file);
+                break;
             }
             evt.dataTransfer.items.clear();
+            evt.dataTransfer.clearData();
         } else {
             evt.dataTransfer.clearData();
         }
@@ -40,7 +47,13 @@ export class DropFileDirective implements OnDestroy {
 
     hovering = (evt: DragEvent) => {
         evt.preventDefault();
+        evt.stopPropagation();
+
         this.element.nativeElement.style.outline = '1px solid red';
+    }
+
+    entering = (evt: Event) => {
+        evt.preventDefault();
     }
 
     ngOnDestroy(): void {

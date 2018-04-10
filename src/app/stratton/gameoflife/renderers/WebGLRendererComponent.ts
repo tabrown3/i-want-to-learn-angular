@@ -103,7 +103,9 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
 
         fromEvent(this.canvas.context.canvas, 'click')
         .subscribe((event: MouseEvent) => {
-            this.canvas.context.canvas.requestPointerLock();
+            if (!this.globalReference.document.pointerLockElement) {
+                this.canvas.context.canvas.requestPointerLock();
+            }
         });
 
 
@@ -150,13 +152,13 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
 
-        // const viewMatrix = mat4.clone(this.camera.rotation);
-        // mat4.translate(viewMatrix, viewMatrix, this.camera.position);
-        // mat4.invert(viewMatrix, viewMatrix);
-        const viewMatrix = mat4.create();
+        const viewMatrix = mat4.clone(this.camera.rotation);
         mat4.translate(viewMatrix, viewMatrix, this.camera.position);
-        mat4.multiply(viewMatrix, viewMatrix, this.camera.rotation);
         mat4.invert(viewMatrix, viewMatrix);
+        // const viewMatrix = mat4.create();
+        // mat4.translate(viewMatrix, viewMatrix, this.camera.position);
+        // mat4.multiply(viewMatrix, viewMatrix, this.camera.rotation);
+        // mat4.invert(viewMatrix, viewMatrix);
 
         // no skewing or scaling, so normals are mostly fine
         const normalMatrix = mat4.create();
@@ -167,10 +169,7 @@ export class WebGlRendererComponent implements Stratton.GameOfLife.IRenderer {
             this.uniformLocations.projectionMatrix,
             false,
             this.camera.projectionMatrix);
-        // this.gl.uniformMatrix4fv(
-        //     this.uniformLocations.modelViewMatrix,
-        //     false,
-        //     this.camera.modelViewMatrix);
+
         this.gl.uniformMatrix4fv(
             this.uniformLocations.normalMatrix,
             false,
