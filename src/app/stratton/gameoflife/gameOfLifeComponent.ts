@@ -7,6 +7,10 @@ import { RendererSelectorComponent, GameOfLifeRendererEnum } from './renderers/R
 
 import { InjectToken} from './gameOfLife.injection';
 
+//
+import { BoardService } from './boardService';
+//
+
 @Component({
     selector: 'app-game-of-life',
     templateUrl: './gameOfLifeTemplate.html',
@@ -18,7 +22,8 @@ export class GameOfLifeComponent implements OnDestroy {
     renderer: RendererSelectorComponent;
 
     constructor(
-        @Inject(InjectToken.IBoardService) private boardService: Stratton.GameOfLife.IBoardService,
+        //@Inject(InjectToken.IBoardService) private boardService: Stratton.GameOfLife.IBoardService,
+        private boardService: BoardService, 
         @Inject(InjectToken.IGlobalReference) private globalReference: Stratton.IGlobalReference,
         private ngZone: NgZone
     ) {      }
@@ -31,8 +36,8 @@ export class GameOfLifeComponent implements OnDestroy {
             this.boardService.renderer = renderer;
             renderer.initialize(this.boardService.constraints);
             if (initState) {
-                this.renderFrame();
-            }
+               this.renderFrame();
+           }
         });
     }
 
@@ -86,11 +91,11 @@ export class GameOfLifeComponent implements OnDestroy {
             this.boardService.tick();
         }
 
-        this.ngZone.run(() => this.boardService.render());
+       this.ngZone.run(() => this.boardService.render());
 
-        this.globalReference.setTimeout(() => {
+       this.globalReference.setTimeout(() => {
             this.globalReference.requestAnimationFrame(() => this.renderFrame());
-        }, this.constraintModel.frameDelay);
+       }, this.constraintModel.frameDelay);
     }
 }
 
