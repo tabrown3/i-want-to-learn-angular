@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ViewChild } from '@angular/core';
+//import { CommonModule } from '@angular/common';
 
 import { TextRendererComponent } from '../renderers/TextRendererComponent';
 import { CanvasRendererComponent } from '../renderers/CanvasRendererComponent';
@@ -16,8 +16,7 @@ export enum GameOfLifeRendererEnum {
 
 @Component({
     selector: 'app-gameoflife-renderselector',
-    template:
-    `
+    template:`
     <app-gameoflife-textrenderer *ngIf="isSelected('text')"></app-gameoflife-textrenderer>
     <app-gameoflife-canvasrenderer *ngIf="isSelected('canvas')"></app-gameoflife-canvasrenderer>
     <app-gameoflife-webglrenderer *ngIf="isSelected('webgl')"></app-gameoflife-webglrenderer>
